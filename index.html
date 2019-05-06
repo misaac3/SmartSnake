@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>SNAKE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js"></script> -->
+
+    <style>
+        html,
+        body {
+            margin: 0;
+            height: 100%;
+            overflow: hidden
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class='col-6' id="score"> 0</div>
+            <!-- <div class="col-6">
+                <label class="radio-inline"><input type="radio" name="optradio" checked></label>
+                <label class="radio-inline"><input type="radio" name="optradio">Option 2</label>
+                <label class="radio-inline"><input type="radio" name="optradio">Option 3</label>
+            </div>
+        </div>
+        <hr /> -->
+            <div>
+                <table>
+                    <tbody id="pastScores">
+                        <td>SCORE</td>
+                        <td>TIME</td>
+                    </tbody>
+                </table>
+
+            </div>
+            <div id="ROOTDIV"></div>
+
+            <!-- <div class="row">
+            <div class="col-6">
+                <canvas id="gameCanvas" width="600" height="600"><canvas>
+
+            </div>
+            <div class="col-6">
+                <canvas id="AICanvas" width="600" height="600"></canvas>
+            </div>
+
+        </div> -->
+
+
+        </div>
+
+</body>
+<script src="tf.min.js"></script>
+<script src="Snake.js"></script>
+<script src="Constants.js"></script>
+<script src="GameInstance.js"></script>
+<script src="Food.js"></script>
+<script src="CanvasCtx.js"></script>
+
+<!-- <script src="NN.js"></script> -->
+
+<!-- <script src="script.js"></script> -->
+<script src="main.js"></script>
+<script src="sweep.js"></script>
+<script src="helper.js"></script>
+
+
+</html>
