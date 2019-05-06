@@ -17,8 +17,8 @@ class GameInstance {
         // this.snake.changeDirection = false;
 
         // // naiveSetup = true;
-        // // score = 0;
-        // // document.getElementById('score').innerHTML = score;
+        // score = 0;
+        document.getElementById('score').innerHTML = 0;
         // // When set to true the snake is changing direction
         // // changingDirection = false;
 
@@ -54,15 +54,9 @@ class GameInstance {
         if (this.didGameEnd()) {
             this.resetGame();
             this.canvCtx.clearCanvas();
-
-
-            // // s.drawSnake()
             this.snake.drawSnake(this.canvCtx.ctx);
-
             this.food.createFood(this.snake.body, 600, 600);
-
             this.food.drawFood(this.canvCtx.ctx);
-
             this.snake.advanceSnake(this.food, 600, 600);
             this.start()
         }
@@ -70,17 +64,20 @@ class GameInstance {
             setTimeout(function onTick() {
                 this.snake.changingDirection = false;
                 this.canvCtx.clearCanvas();
-
+                // this.canvCtx.makeGrid();
                 this.food.drawFood(this.canvCtx.ctx);
 
                 // naiveAI()
                 this.snake.advanceSnake(this.food, 600, 600);
 
                 this.snake.drawSnake(this.canvCtx.ctx);
-                // checkNearWall()
-                // getNearbyObstacles()
+                // this.snake.checkNearWall()
 
-                // console.log('------------------------------');
+
+                let inputs = this.createInputs()
+                this.snake.predict(inputs)
+                // this.snake.getLinearObstacles();
+
                 this.start();
 
             }.bind(this), GAME_SPEED)
@@ -92,6 +89,36 @@ class GameInstance {
         // console.log(this, e);
         this.snake.changeDirection(e);
         this.snake.changingDirection = false;
+    }
+
+    createInputs() {
+        let obs = this.snake.getNearbyObstacles(); //8
+        let dx = this.snake.dx//1
+        let dy = this.snake.dy//1
+        let x = this.snake.body[0].x//1
+        let y = this.snake.body[0].y//1
+        let foodPos = { x: this.food.x, y: this.food.y }//2
+
+        let inputs = [
+            obs.up.x,
+            obs.up.y,
+            obs.down.x,
+            obs.down.y,
+            obs.left.x,
+            obs.left.y,
+            obs.right.x,
+            obs.right.y,
+            dx,
+            dy,
+            x,
+            y,
+            foodPos.x,
+            foodPos.y
+
+        ]
+
+        // console.log(inputs);
+        return inputs
     }
 
 }

@@ -7,12 +7,20 @@ class Snake {
         this.dx = 10;
         this.dy = 0;
         this.changingDirection = false;
+        this.NN = new NN();
 
     }
 
     drawSnake(ctx) {
         // loop through the snake parts drawing each part on the canvas
         this.body.forEach((snakePart) => this.drawSnakePart(snakePart, ctx))
+        let w = this.w
+
+        for (let i = 0; i < w; i += 10) {
+            for (let j = 0; j < w; j += 10)
+                this.ctx.strokeRect(i, j, gameCanvas.width, gameCanvas.height);
+
+        }
     }
 
     drawSnakePart(snakePart, ctx) {
@@ -89,6 +97,209 @@ class Snake {
             this.dx = 0;
             this.dy = 10;
         }
+    }
+
+
+    getNearbyObstacles = () => {
+
+        let { x, y } = this.body[0]
+        let snake = this.body
+        // console.log(this);
+
+        let up = { x: x, y: y - 10 }
+        let down = { x: x, y: y + 10 }
+        let left = { x: x - 10, y: y }
+        let right = { x: x + 10, y: y }
+
+        let tail = snake.map(x => x).splice(2, snake.length)
+
+        let upArray = tail.filter(t => isSamePosition(t, up))
+        let upObstacle = upArray.length > 0 ? upArray[0] : null;
+
+        let downArray = tail.filter(t => isSamePosition(t, down))
+        let downObstacle = downArray.length > 0 ? downArray[0] : null
+
+        let leftArray = tail.filter(t => isSamePosition(t, left))
+        let leftObstacle = leftArray.length > 0 ? leftArray[0] : null
+
+        let rightArray = tail.filter(t => isSamePosition(t, right))
+        let rightObstacle = rightArray.length > 0 ? rightArray[0] : null
+
+        if (!upObstacle) {
+            let upWall = { x: up.x, y: -10 }
+            upObstacle = isSamePosition(up, upWall) ? upWall : { x: -1, y: -1 }
+        }
+
+        if (!downObstacle) {
+            let downWall = { x: down.x, y: gameCanvas.height, }
+            downObstacle = isSamePosition(down, downWall) ? downWall : { x: -1, y: -1 }
+        }
+
+        if (!leftObstacle) {
+            let leftWall = { x: -10, y: left.y }
+            leftObstacle = isSamePosition(left, leftWall) ? leftWall : { x: -1, y: -1 }
+        }
+
+        if (!rightObstacle) {
+            let rightWall = { x: gameCanvas.width, y: right.y }
+            rightObstacle = isSamePosition(right, rightWall) ? rightWall : { x: -1, y: -1 }
+        }
+
+
+        let obstacles = { up: upObstacle, down: downObstacle, left: leftObstacle, right: rightObstacle }
+
+
+
+        // obstacles = obstacles.forEach((s) => {
+        //     if (!s) return { x: -1, y: -1 }
+        //     return s
+        // })
+
+        // console.log('');
+        // console.log(obstacles);
+        return obstacles;
+    }
+
+    // checkNearWall = () => {
+    //     if (this.body[0].x <= 0) {
+    //         console.log('Near left wall');
+    //     }
+    //     if (this.body.x >= gameCanvas.width - 10) {
+    //         console.log('Near Right wall');
+    //     }
+    //     if (this.body.y <= 0) {
+    //         console.log('near top wall');
+    //     }
+    //     if (this.body.y >= gameCanvas.height - 10) {
+    //         console.log('Near Bottom wall');
+    //     }
+    // }
+
+    getLinearObstacles() {
+
+        //the position of the head
+        let { x, y } = this.body[0];
+
+        let upWall = { x: x, y: -10 };
+        let downWall = { x: x, y: gameCanvas.height, };
+        let leftWall = { x: -10, y: y };
+        let rightWall = { x: gameCanvas.width, y: y };
+
+
+        //initializing obstacle object to be returned
+        // let obstacles = { up: upWall, down: downWall, left: leftWall, right: rightWall };
+        let obstacles = { up: null, down: null, left: null, right: null };
+
+        let tail = [...this.body].slice(1, this.body.length);
+
+        tail.forEach((snakePart) => {
+            let currX = snakePart.x;
+            let currY = snakePart.x;
+            console.log("CurrX:", currX, "X:", x);
+            console.log("CurrY:", currY, "Y:", y);
+
+
+            // up --> same x, lesser y
+            if (currX === x && currY < y) {
+                obstacles.up == null ? obstacles.up = { x: currX, y: currY } :
+                    (obstacles.up.y < currY ? obstacles.up : obstacles.up = { x: currX, y: currY })
+
+            }
+
+            // down --> same x, greater y
+            else if (currX === x && currY > y) {
+                obstacles.down == null ? obstacles.down = { x: currX, y: currY } :
+                    (obstacles.down.y > currY ? obstacles.down : obstacles.down = { x: currX, y: currY })
+            }
+
+
+            // left --> lesser x, same y
+            else if (currX < x && currY === y) {
+                obstacles.left == null ? obstacles.left = { x: currX, y: currY } :
+                    (obstacles.left.x < currX ? obstacles.left : obstacles.left = { x: currX, y: currY })
+            }
+            // right --> greater x, same y
+            else if (currX >= x && currY == y) {
+                console.log('IN IF');
+
+                if (obstacles.right == null) {
+                    obstacles.right = { x: currX, y: currY }
+                    console.log('obs right CHANGED From Null:', obstacles.right);
+
+                }
+                else if (obstacles.right.x < currX) {
+                    //if currX is to the right of the head AND to the left of the previous 
+                    obstacles.right = { x: currX, y: currY }
+                    console.log('obs right CHANGED:', obstacles.right);
+
+                }
+                // obstacles.right == null ?
+                //     obstacles.right = { x: currX, y: currY } :
+                //     (obstacles.right.x < currX ?
+                //         obstacles.right :
+                //         (obstacles.right = { x: currX, y: currY }))
+                // console.log("IN IF", obstacles.right);
+            }
+
+
+        });
+
+
+        if (obstacles.up == null) {
+            obstacles.up = upWall
+            // console.log('ob is wall');
+        }
+        if (obstacles.down == null) {
+            obstacles.down = downWall
+            // console.log('ob is wall');
+        }
+        if (obstacles.left == null) {
+            obstacles.left = leftWall
+            // console.log('ob is wall');
+        }
+        if (obstacles.right == null) {
+            // obstacles.right = rightWall
+            console.log('ob is wall');
+        }
+
+        console.log(obstacles.right);
+        console.log(' ');
+        return obstacles
+    };
+
+
+    predict(inputs) {
+        let out = this.NN.predict(inputs).arraySync()[0];
+
+        let i = out.indexOf(Math.max(...out));
+        // console.log(out, i);
+
+        switch (i) {
+            case 0:
+                //move up
+                this.NNChangeDir(0, -10)
+                break
+            case 1:
+                //move down
+                this.NNChangeDir(0, 10)
+                break
+            case 2:
+                //move left
+                this.NNChangeDir(-10, 0)
+                break
+            case 3:
+                //move right
+                this.NNChangeDir(0, 10)
+
+                break
+
+        }
+
+    }
+
+    NNChangeDir(dx, dy) {
+        this.dx = dx
+        this.dy = dy
     }
 
 

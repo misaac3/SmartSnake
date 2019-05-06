@@ -1,5 +1,7 @@
 class CanvasCtx {
     constructor(w, h, id) {
+        this.width = w
+        this.height = h
         this.ctx = this.createContext(w, h, id)
 
     }
@@ -12,7 +14,16 @@ class CanvasCtx {
         document.getElementById("ROOTDIV").appendChild(canvas)
         return canvas.getContext("2d");
     }
+    makeGrid() {
+        let w = this.w
 
+        for (let i = 0; i < w; i += 10) {
+            for (let j = 0; j < w; j += 10)
+                this.ctx.strokeRect(i, j, gameCanvas.width, gameCanvas.height);
+
+        }
+
+    }
     clearCanvas() {
         //  Select the colour to fill the drawing
         this.ctx.fillStyle = CANVAS_BACKGROUND_COLOUR;

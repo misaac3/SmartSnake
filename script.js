@@ -39,7 +39,7 @@ document.getElementById("ROOTDIV").appendChild(canvas2)
 console.log(canvas2);
 
 // Get the canvas element
-const gameCanvas = document.getElementById("gameCanvas");
+// const gameCanvas = document.getElementById("gameCanvas");
 // Return a two dimensional drawing context
 const ctx = gameCanvas.getContext("2d");
 // Start game
