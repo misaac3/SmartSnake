@@ -3,13 +3,14 @@ class GameInstance {
         this.snake = new Snake()
         this.canvCtx = new CanvasCtx(600, 600, canvasID)
         this.food = new Food(this.snake.body, 600, 600)
+        this.savedTimes = []
 
     }
 
 
 
     resetGame() {
-        console.log('\nGAME OVER\n');
+        // console.log('\nGAME OVER\n');
 
 
         // this.snake = new Snake()
@@ -52,6 +53,11 @@ class GameInstance {
         // console.log('Main');
         // If the game ended return early to stop game
         if (this.didGameEnd()) {
+            this.snake.died();
+            this.savedTimes.push(this.snake.time)
+            console.log(this.snake.time);
+            this.savedTimes = this.savedTimes.sort(function(a, b){return a-b})
+            console.log('Best Time: ', this.savedTimes[this.savedTimes.length-1]);
             this.resetGame();
             this.canvCtx.clearCanvas();
             this.snake.drawSnake(this.canvCtx.ctx);

@@ -1,4 +1,4 @@
-const GAME_SPEED = 00;
+const GAME_SPEED = 000;
 const CANVAS_BORDER_COLOUR = 'black';
 const CANVAS_BACKGROUND_COLOUR = "white";
 const SNAKE_COLOUR = 'lightgreen';

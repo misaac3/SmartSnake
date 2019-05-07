@@ -21,12 +21,12 @@ class Food {
         this.y = this.randomTen(0, canvasHeight - 10);
 
         // if the new food location is where the snake currently is, generate a new food location
-        snake.forEach(this.isFoodOnSnake.bind(this))
+        snake.forEach(() => this.isFoodOnSnake(snake, canvasWidth, canvasHeight))
 
     }
     isFoodOnSnake(part) {
         const foodIsoNsnake = part.x == this.x && part.y == this.y;
-        if (foodIsoNsnake) createFood();
+        if (foodIsoNsnake) this.createFood(snake, canvasWidth, canvasHeight);
     }
 
     drawFood(ctx) {

@@ -8,9 +8,16 @@ class Snake {
         this.dy = 0;
         this.changingDirection = false;
         this.NN = new NN();
+        this.startTime = new Date()
 
     }
 
+    died() {
+        let endTime = new Date()
+        this.time = endTime - this.startTime
+        // console.log(this.time)
+
+    }
     drawSnake(ctx) {
         // loop through the snake parts drawing each part on the canvas
         this.body.forEach((snakePart) => this.drawSnakePart(snakePart, ctx))
@@ -258,8 +265,8 @@ class Snake {
             // console.log('ob is wall');
         }
         if (obstacles.right == null) {
-            // obstacles.right = rightWall
-            console.log('ob is wall');
+            obstacles.right = rightWall
+            // console.log('ob is wall');
         }
 
         console.log(obstacles.right);
@@ -278,19 +285,22 @@ class Snake {
             case 0:
                 //move up
                 this.NNChangeDir(0, -10)
+                // console.log('up');
                 break
             case 1:
                 //move down
                 this.NNChangeDir(0, 10)
+                // console.log('down');
                 break
             case 2:
                 //move left
                 this.NNChangeDir(-10, 0)
+                // console.log('left');
                 break
             case 3:
                 //move right
-                this.NNChangeDir(0, 10)
-
+                this.NNChangeDir(10, 0)
+                // console.log('right');
                 break
 
         }
