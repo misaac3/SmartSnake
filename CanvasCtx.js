@@ -7,6 +7,7 @@ class CanvasCtx {
     }
 
     createContext(width, height, id) {
+        if (document.getElementById(id)) { return document.getElementById(id).getContext("2d"); }
         var canvas = document.createElement('canvas');
         canvas.width = width;
         canvas.height = height;

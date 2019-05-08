@@ -1,6 +1,11 @@
-let gi = new GameInstance('gameCanvas')
+tf.setBackend('cpu');
+
+
+let gi = new GameInstance('gameCanvas', 1000)
 document.addEventListener("keydown", gi.changeDirection.bind(gi));
 gi.start()
+
+
 
 // let gi2 = new GameInstance('gameCanvas2')
 // document.addEventListener("keydown", gi2.changeDirection.bind(gi2));

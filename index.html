@@ -11,12 +11,12 @@
     <!-- <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js"></script> -->
 
     <style>
-        html,
+        /* html,
         body {
             margin: 0;
             height: 100%;
             overflow: hidden
-        }
+        } */
     </style>
 
 </head>
@@ -24,37 +24,21 @@
 <body>
     <div class="container">
         <div class="row">
-            <div class='col-6' id="score"> 0</div>
-            <!-- <div class="col-6">
-                <label class="radio-inline"><input type="radio" name="optradio" checked></label>
-                <label class="radio-inline"><input type="radio" name="optradio">Option 2</label>
-                <label class="radio-inline"><input type="radio" name="optradio">Option 3</label>
-            </div>
-        </div>
-        <hr /> -->
+            <div class='col-6' style="" id="score"> 0</div>
             <div>
-                <table>
+                <table class="table">
                     <tbody id="pastScores">
-                        <td>SCORE</td>
-                        <td>TIME</td>
+                        <th>Generation</th>
+                        <th>Best Fitness</th>
+                        <th>Average Fitness</th>
+                        <th>Best Score</th>
+                        <th>Average Score</th>
+                        <th># Snakes Survive</th>
+
                     </tbody>
                 </table>
-
             </div>
-            <div id="ROOTDIV"></div>
-
-            <!-- <div class="row">
-            <div class="col-6">
-                <canvas id="gameCanvas" width="600" height="600"><canvas>
-
-            </div>
-            <div class="col-6">
-                <canvas id="AICanvas" width="600" height="600"></canvas>
-            </div>
-
-        </div> -->
-
-
+            <div class="col-6" id="ROOTDIV"></div>
         </div>
 
 </body>

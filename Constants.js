@@ -1,4 +1,4 @@
-const GAME_SPEED = 000;
+const GAME_SPEED = 00;
 const CANVAS_BORDER_COLOUR = 'black';
 const CANVAS_BACKGROUND_COLOUR = "white";
 const SNAKE_COLOUR = 'lightgreen';
@@ -20,11 +20,11 @@ const SQUARE_SIZE = 10;
 
 let initialBody = [
 
-    { x: 100, y: 50 },
-    { x: 90, y: 50 },
-    { x: 80, y: 50 },
-    { x: 70, y: 50 },
-    { x: 60, y: 50 },
+    // { x: 100, y: 50 },
+    // { x: 90, y: 50 },
+    // { x: 80, y: 50 },
+    // { x: 70, y: 50 },
+    // { x: 60, y: 50 },
     { x: 50, y: 50 },
     { x: 40, y: 50 },
     { x: 30, y: 50 },

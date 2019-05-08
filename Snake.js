@@ -1,21 +1,30 @@
 class Snake {
 
-    constructor() {
+    constructor(options) {
         this.body = [...initialBody];
         this.score = 0;
-        this.time = 0;
+        this.moves = 0;
         this.dx = 10;
         this.dy = 0;
+        this.fitness = 0;
         this.changingDirection = false;
-        this.NN = new NN();
-        this.startTime = new Date()
-
+        this.lastPosition = null
+        this.lastDistance = null
+        if ((options && options.oldNN)) {
+            this.NN = options.oldNN
+        }
+        else if (options && options.mutationRate && options.parentNN) {
+            this.NN = new NN(options.parentNN, options.mutationRate)
+        }
+        else {
+            this.NN = new NN();
+        }
     }
 
     died() {
-        let endTime = new Date()
-        this.time = endTime - this.startTime
-        // console.log(this.time)
+        // this.fitness = (this.moves / 100) + (this.score * 20)
+        if (!this.fitness) this.fitness = 0
+        console.log(`fitness ${this.fitness}`)
 
     }
     drawSnake(ctx) {
@@ -52,16 +61,38 @@ class Snake {
         const didEatFood = this.body[0].x === foodX && this.body[0].y === foodY;
         if (didEatFood) {
             // Increase score
-            this.score += 10;
+            this.score += 1;
             // Display score on screen
             document.getElementById('score').innerHTML = this.score;
             // Generate new food location
             foodObj.createFood(this.body, w, h);
             console.log('FOOD FOUND');
+            this.lastPosition = null
+            this.lastDistance = null
+            this.fitness += 100
+
         } else {
             // Remove the last part of snake body
             this.body.pop();
         }
+        this.moves++
+        if (this.lastPosition) {
+            let newDistance = this.distance(foodObj, this.lastPosition);
+            if (newDistance < this.lastPosition) {
+                this.fitness += 5
+            }
+            else {
+                this.fitness -= 0.5
+            }
+            this.lastDistance = newDistance
+            this.lastPosition = head
+        }
+        else {
+            let newDistance = this.distance(foodObj, head);
+            this.lastDistance = newDistance
+            this.lastPosition = head
+        }
+
     }
 
 
@@ -167,20 +198,92 @@ class Snake {
         return obstacles;
     }
 
-    // checkNearWall = () => {
-    //     if (this.body[0].x <= 0) {
-    //         console.log('Near left wall');
-    //     }
-    //     if (this.body.x >= gameCanvas.width - 10) {
-    //         console.log('Near Right wall');
-    //     }
-    //     if (this.body.y <= 0) {
-    //         console.log('near top wall');
-    //     }
-    //     if (this.body.y >= gameCanvas.height - 10) {
-    //         console.log('Near Bottom wall');
-    //     }
-    // }
+    getNearbyObstaclesBool = () => {
+        let obs = { up: 0, down: 0, left: 0, right: 0 }
+        if (this.body[0].x <= 0) {
+            // console.log('Near left wall');
+            obs.left = 1
+        }
+        else {
+            obs.left = this.bodyNearItself('left')
+        }
+        if (this.body.x >= gameCanvas.width - 10) {
+            // console.log('Near Right wall');
+            obs.right = 1
+        }
+        else {
+            obs.right = this.bodyNearItself('right')
+        }
+        if (this.body.y <= 0) {
+            // console.log('near top wall');
+            obs.top = 1
+        }
+        else {
+            obs.top = this.bodyNearItself('top')
+        }
+        if (this.body.y >= gameCanvas.height - 10) {
+            // console.log('Near Bottom wall');
+            obs.down = 1
+        }
+        else {
+            obs.down = this.bodyNearItself('dwon')
+        }
+        // console.log(obs);
+        return obs
+    }
+
+    bodyNearItself(dir) {
+        let tail = this.body.slice(1, this.body.length)
+        // console.log(tail.length);
+        let head = this.body[0]
+
+        if (dir == 'left') {
+            let left = 0
+            tail.forEach(({ x, y }) => {
+                if ((y == head.y) && (head.x - x == 10)) {
+                    left = 1
+                    return
+                }
+            })
+            return left
+
+        }
+        else if (dir == 'right') {
+            let right = 0
+            tail.forEach(({ x, y }) => {
+                if ((y == head.y) && (head.x - x == -10)) {
+                    right = 1
+                    return
+                }
+            })
+            return right
+
+        }
+        else if (dir == 'up') {
+            let up = 0
+            tail.forEach(({ x, y }) => {
+                if ((x == head.x) && (head.y - y == 10)) {
+                    up = 1
+                    return
+                }
+            })
+            return up
+
+
+        }
+        else if (dir == 'down') {
+            let down = 0
+            tail.forEach(({ x, y }) => {
+                if ((x == head.x) && (head.y - y == -10)) {
+                    down = 1
+                    return
+                }
+            })
+            return down
+
+        }
+        return 0
+    }
 
     getLinearObstacles() {
 
@@ -276,6 +379,7 @@ class Snake {
 
 
     predict(inputs) {
+        let { dx, dy } = this
         let out = this.NN.predict(inputs).arraySync()[0];
 
         let i = out.indexOf(Math.max(...out));
@@ -284,22 +388,27 @@ class Snake {
         switch (i) {
             case 0:
                 //move up
-                this.NNChangeDir(0, -10)
+                if (!(dx == 0 && dy == 10))
+                    this.NNChangeDir(0, -10)
                 // console.log('up');
                 break
             case 1:
                 //move down
-                this.NNChangeDir(0, 10)
+                if (!(dx == 0 && dy == -10))
+                    this.NNChangeDir(0, 10)
                 // console.log('down');
                 break
             case 2:
                 //move left
-                this.NNChangeDir(-10, 0)
+                if (!(dx == 10 && dy == 0))
+                    this.NNChangeDir(-10, 0)
                 // console.log('left');
                 break
             case 3:
                 //move right
-                this.NNChangeDir(10, 0)
+                if (!(dx == -10 && dy == 0))
+
+                    this.NNChangeDir(10, 0)
                 // console.log('right');
                 break
 
@@ -308,10 +417,15 @@ class Snake {
     }
 
     NNChangeDir(dx, dy) {
+
         this.dx = dx
         this.dy = dy
     }
 
-
-
+    mutate(parentNN, mutationRate) {
+        return new NN(parentNN, mutationRate)
+    }
+    distance(a, b) {
+        return Math.hypot(b.x - a.x, b.y - a.y)
+    }
 }
