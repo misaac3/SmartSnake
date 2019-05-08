@@ -20,13 +20,18 @@ class Food {
         // Generate a random number for the food y-coordinate
         this.y = this.randomTen(0, canvasHeight - 10);
 
+
+        if (this.x == initialBody[0].x || this.y == initialBody[0].y) {
+            this.createFood(snake, canvasWidth, canvasHeight);
+        }
         // if the new food location is where the snake currently is, generate a new food location
-        snake.forEach(() => this.isFoodOnSnake(snake, canvasWidth, canvasHeight))
+        else { snake.forEach((snakePart) => this.isFoodOnSnake(snakePart, canvasWidth, canvasHeight)) }
+
 
     }
-    isFoodOnSnake(part) {
-        const foodIsoNsnake = part.x == this.x && part.y == this.y;
-        if (foodIsoNsnake) this.createFood(snake, canvasWidth, canvasHeight);
+    isFoodOnSnake(snakePart, canvasWidth, canvasHeight) {
+        const foodIsoNsnake = snakePart.x == this.x && snakePart.y == this.y;
+        if (foodIsoNsnake) this.createFood(snakePart, canvasWidth, canvasHeight);
     }
 
     drawFood(ctx) {
