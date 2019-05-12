@@ -25,50 +25,80 @@
         crossorigin="anonymous"></script>
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
     <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
-    <style>
-        /* html,
-        body {
-            margin: 0;
-            height: 100%;
-            overflow: hidden
-        } */
-    </style>
+    <link href="style.css" rel="stylesheet">
 
 </head>
 
-<body>
-    <div class="container">
-        <div class="row">
-            <!-- <div class="btn-group" data-toggle="buttons"> -->
-            <input class="btn btn-success active" type="checkbox" drawBtn" onclick="shouldDrawBtn()" checked
-                data-toggle="toggle" >
-               Show Snake
-            </input>
-        </div>
-        <div class=" row">
-            <input type="checkbox" checked data-toggle="toggle"> First
 
-            <!-- <label class="checkbox-inline">
+<div class="container">
+    <div class="row">
+        <!-- <div class="col-12"> -->
+        <div class="col-6" id="ROOTDIV">
+            <div class='col-12' id="score"> 0</div>
+            <hr />
+            <div class='col-12' id="currFitness"></div>
+            <hr />
+            <div class='col-12' id="time"></div>
+            <hr />
+            <div class='col-12' id="bestFitness"></div>
+            <hr />
+            <div class='col-6' id="generation"></div>
+            <div class='col-6' id="snakeNum"></div>
+
+            <hr />
+        </div>
+        <div class="col-6">
+            <div class="row">
+
+                <form>
+                    Change Game Speed
+                    <div class="form-group row " >
+                        <input id="gameSpeedrangeInput" class="form-control-range" type="range" value="0" min="0"
+                            max="100" oninput="changeGameSpeed(this.value)" onchange="changeGameSpeed(this.value)" />
+                        <input id="gameSpeedTextInput" class="form-text" type="number" value="0" min="0" max="100"
+                            onsubmit="onKeydownGameSpeed(this)" onkeydown="onKeydownGameSpeed(this)"
+                            onchange="changeGameSpeed(this.value)" />
+
+                    </div>
+                </form>
+            </div>
+
+            <div class="row">
+
+                <body>
+                    <!-- <div class="slidecontainer">
+                        <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+                    </div> -->
+
+                    <!-- <div class="btn-group" data-toggle="buttons"> -->
+                    <div class="btn btn-success active" id="drawBtn" onclick="shouldDrawBtn()">
+                        Currently drawing snake
+                    </div>
+            </div>
+            <div class="row">
+                <!-- <input type="checkbox" checked data-toggle="toggle"> First -->
+
+                <!-- <label class="checkbox-inline">
                 <input type="checkbox" data-toggle="toggle"> Second
             </label>
             <label class="checkbox-inline">
                 <input type="checkbox" data-toggle="toggle"> Third
             </label> -->
-        </div>
-        <!-- </div> -->
-        <div class="row">
+            </div>
+            <!-- </div> -->
+            <div class="row">
 
-            <div>
-                <table class="table">
-                    <th>Generation</th>
-                    <th>Best Fitness</th>
-                    <th>Average Fitness</th>
-                    <th>Best Score</th>
-                    <th>Average Score</th>
-                    <th># Snakes Survive</th>
-                    <th># Tensors</th>
-                    <tbody id="pastScores">
-                        <!-- <th>Generation</th>
+                <div>
+                    <table class="table">
+                        <th>Generation</th>
+                        <th>Best Fitness</th>
+                        <th>Average Fitness</th>
+                        <th>Best Score</th>
+                        <th>Average Score</th>
+                        <th># Snakes Survive</th>
+                        <th># Tensors</th>
+                        <tbody id="pastScores">
+                            <!-- <th>Generation</th>
                         <th>Best Fitness</th>
                         <th>Average Fitness</th>
                         <th>Best Score</th>
@@ -77,40 +107,32 @@
                         <th># Tensors</th> -->
 
 
-                    </tbody>
-                    <th>Generation</th>
-                    <th>Best Fitness</th>
-                    <th>Average Fitness</th>
-                    <th>Best Score</th>
-                    <th>Average Score</th>
-                    <th># Snakes Survive</th>
-                    <th># Tensors</th>
-                    <!-- <tfoot>Generation</tfoot>
+                        </tbody>
+                        <th>Generation</th>
+                        <th>Best Fitness</th>
+                        <th>Average Fitness</th>
+                        <th>Best Score</th>
+                        <th>Average Score</th>
+                        <th># Snakes Survive</th>
+                        <th># Tensors</th>
+                        <!-- <tfoot>Generation</tfoot>
                     <tfoot>Best Fitness</tfoot>
                     <tfoot>Average Fitness</tfoot>
                     <tfoot>Best Score</tfoot>
                     <tfoot>Average Score</tfoot>
                     <tfoot># Snakes Survive</tfoot>
                     <tfoot># Tensors</tfoot> -->
-                </table>
+                    </table>
+                </div>
             </div>
+            <hr />
+
         </div>
-        <hr />
-        <div class='col-12' id="score"> 0</div>
-        <hr />
-        <div class='col-12' id="currFitness"></div>
-        <hr />
-        <div class='col-12' id="time"></div>
-        <hr />
-        <div class='col-12' id="bestFitness"></div>
-        <hr />
-        <div class='col-6' id="generation"></div>
-        <div class='col-6' id="snakeNum"></div>
 
-        <hr />
 
-        <div class="col-12" id="ROOTDIV"></div>
+        <!-- </div> -->
     </div>
+</div>
 
 </body>
 <script src="tf.min.js"></script>

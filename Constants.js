@@ -1,4 +1,6 @@
-let GAME_SPEED = 00;
+// let GAME_SPEED = 00;
+let GAME_SPEED = document.querySelector("#gameSpeedrangeInput").value
+
 const CANVAS_BORDER_COLOUR = 'black';
 const CANVAS_BACKGROUND_COLOUR = "white";
 const SNAKE_COLOUR = 'lightgreen';
@@ -48,6 +50,8 @@ function sigmoid(z) {
 
 function shouldDrawBtn() {
     let btn = document.querySelector('#drawBtn')
+    // console.log(this);
+
     if (btn.classList.contains("btn-success")) {
         btn.classList.remove(("btn-success"))
         btn.classList.add("btn-danger")
@@ -62,5 +66,22 @@ function shouldDrawBtn() {
 
     }
 
+
+}
+
+function changeGameSpeed(value) {
+    GAME_SPEED = value * 2
+    document.querySelector("#gameSpeedrangeInput").value = value;
+    document.querySelector("#gameSpeedTextInput").value = value
+}
+
+
+function onKeydownGameSpeed(e) {
+    event.preventDefault();
+    changeGameSpeed(e.value)
+    if (event.key === 'Enter' || (event.keyCode == 13)) {
+        return false
+    }
+    return false
 
 }

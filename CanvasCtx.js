@@ -8,11 +8,16 @@ class CanvasCtx {
 
     createContext(width, height, id) {
         if (document.getElementById(id)) { return document.getElementById(id).getContext("2d"); }
+        let canvasWrapper = document.createElement('div');
+        // canvasWrapper.classList.add("")
+
         var canvas = document.createElement('canvas');
         canvas.width = width;
         canvas.height = height;
         canvas.id = id
-        document.getElementById("ROOTDIV").appendChild(canvas)
+        canvasWrapper.appendChild(canvas)
+
+        document.getElementById("ROOTDIV").appendChild(canvasWrapper)
         return canvas.getContext("2d");
     }
     makeGrid() {
