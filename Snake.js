@@ -10,11 +10,23 @@ class Snake {
         this.changingDirection = false;
         this.lastPosition = null
         this.lastDistance = null
+        // console.log(options);
+        this.prevPositions = []
+        this.prevPositions.push(this.body[0])
         if ((options && options.oldNN)) {
             this.NN = options.oldNN
         }
         else if (options && options.mutationRate && options.parentNN) {
-            this.NN = new NN(options.parentNN, options.mutationRate)
+            // console.log('mutate in snake constructor');
+            // console.log(options);
+            // this.NN = new NN(options.parentNN, options.mutationRate)
+            this.NN = new NN(options)
+        }
+        else if (options && options.crossover && options.NN1 && options.NN2 && options.snake1Fit != null && options.snake2Fit != null) {
+            // console.log('crossover in Snake constructor');
+
+            this.NN = new NN(options)
+
         }
         else {
             this.NN = new NN();
@@ -23,19 +35,28 @@ class Snake {
 
     died() {
         // this.fitness = (this.moves / 100) + (this.score * 20)
-        if (!this.fitness) this.fitness = 0
-        console.log(`fitness ${this.fitness}`)
+        if (!this.fitness || this.fitness < 0) this.fitness = 0
+        // this.fitness += (this.score * 100)
+        if (this.score > 0) {
+            let mult = (this.score / Math.pow(this.moves, 0.5)) + 1
+
+            this.fitness *= mult
+            console.log(mult);
+        }
+        if (this.fitness >= 20) console.log(`fitness ${this.fitness}`)
 
     }
     drawSnake(ctx) {
         // loop through the snake parts drawing each part on the canvas
-        this.body.forEach((snakePart) => this.drawSnakePart(snakePart, ctx))
-        let w = this.w
+        if (shouldDraw) {
+            this.body.forEach((snakePart) => this.drawSnakePart(snakePart, ctx))
+            let w = this.w
 
-        for (let i = 0; i < w; i += 10) {
-            for (let j = 0; j < w; j += 10)
-                this.ctx.strokeRect(i, j, gameCanvas.width, gameCanvas.height);
+            for (let i = 0; i < w; i += 10) {
+                for (let j = 0; j < w; j += 10)
+                    this.ctx.strokeRect(i, j, gameCanvas.width, gameCanvas.height);
 
+            }
         }
     }
 
@@ -63,7 +84,8 @@ class Snake {
             // Increase score
             this.score += 1;
             // Display score on screen
-            document.getElementById('score').innerHTML = this.score;
+            document.getElementById('score').innerHTML = 'score: ' + this.score;
+            if (this.score > 0) document.getElementById('score').style.backgroundColor = 'lightgreen'
             // Generate new food location
             foodObj.createFood(this.body, w, h);
             console.log('FOOD FOUND');
@@ -78,8 +100,11 @@ class Snake {
         this.moves++
         if (this.lastPosition) {
             let newDistance = this.distance(foodObj, this.lastPosition);
-            if (newDistance < this.lastPosition) {
-                this.fitness += 5
+            // let lastDis = this.distance(foodObj, this.lastPosition);
+            // console.log(newDistance, this.lastDistance);
+            let sameRecentPos = this.prevPositions.filter((pos) => isSamePosition(pos, head)).length > 0
+            if (newDistance < this.lastDistance || !sameRecentPos) {
+                this.fitness += 1
             }
             else {
                 this.fitness -= 0.5
@@ -92,6 +117,9 @@ class Snake {
             this.lastDistance = newDistance
             this.lastPosition = head
         }
+        this.prevPositions.push(head)
+        if (this.prevPositions.length > 5) this.prevPositions.shift()
+
 
     }
 
@@ -207,28 +235,28 @@ class Snake {
         else {
             obs.left = this.bodyNearItself('left')
         }
-        if (this.body.x >= gameCanvas.width - 10) {
+        if (this.body[0].x >= gameCanvas.width - 10) {
             // console.log('Near Right wall');
             obs.right = 1
         }
         else {
             obs.right = this.bodyNearItself('right')
         }
-        if (this.body.y <= 0) {
+        if (this.body[0].y <= 0) {
             // console.log('near top wall');
-            obs.top = 1
+            obs.up = 1
         }
         else {
-            obs.top = this.bodyNearItself('top')
+            obs.up = this.bodyNearItself('up')
         }
-        if (this.body.y >= gameCanvas.height - 10) {
+        if (this.body[0].y >= gameCanvas.height - 10) {
             // console.log('Near Bottom wall');
             obs.down = 1
         }
         else {
-            obs.down = this.bodyNearItself('dwon')
+            obs.down = this.bodyNearItself('down')
         }
-        // console.log(obs);
+        // console.log("obs:", obs);
         return obs
     }
 
@@ -241,8 +269,9 @@ class Snake {
             let left = 0
             tail.forEach(({ x, y }) => {
                 if ((y == head.y) && (head.x - x == 10)) {
+
                     left = 1
-                    return
+                    // return
                 }
             })
             return left
@@ -253,7 +282,7 @@ class Snake {
             tail.forEach(({ x, y }) => {
                 if ((y == head.y) && (head.x - x == -10)) {
                     right = 1
-                    return
+                    // return
                 }
             })
             return right
@@ -264,7 +293,7 @@ class Snake {
             tail.forEach(({ x, y }) => {
                 if ((x == head.x) && (head.y - y == 10)) {
                     up = 1
-                    return
+                    // return
                 }
             })
             return up
@@ -276,7 +305,7 @@ class Snake {
             tail.forEach(({ x, y }) => {
                 if ((x == head.x) && (head.y - y == -10)) {
                     down = 1
-                    return
+                    // return
                 }
             })
             return down
@@ -422,9 +451,10 @@ class Snake {
         this.dy = dy
     }
 
-    mutate(parentNN, mutationRate) {
-        return new NN(parentNN, mutationRate)
-    }
+    // mutate(parentNN, mutationRate) {
+    //     console.log('mutated in SNAKE');
+    //     return new NN(parentNN, mutationRate)
+    // }
     distance(a, b) {
         return Math.hypot(b.x - a.x, b.y - a.y)
     }

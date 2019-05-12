@@ -25,20 +25,24 @@ class Food {
             this.createFood(snake, canvasWidth, canvasHeight);
         }
         // if the new food location is where the snake currently is, generate a new food location
-        else { snake.forEach((snakePart) => this.isFoodOnSnake(snakePart, canvasWidth, canvasHeight)) }
+        else {
+            snake.forEach((snakePart) => this.isFoodOnSnake(snakePart, canvasWidth, canvasHeight, snake))
+        }
 
 
     }
-    isFoodOnSnake(snakePart, canvasWidth, canvasHeight) {
+    isFoodOnSnake(snakePart, canvasWidth, canvasHeight, snake) {
         const foodIsoNsnake = snakePart.x == this.x && snakePart.y == this.y;
-        if (foodIsoNsnake) this.createFood(snakePart, canvasWidth, canvasHeight);
+        if (foodIsoNsnake) this.createFood(snake, canvasWidth, canvasHeight);
     }
 
     drawFood(ctx) {
-        ctx.fillStyle = FOOD_COLOUR;
-        ctx.strokestyle = FOOD_BORDER_COLOUR;
-        ctx.fillRect(this.x, this.y, 10, 10);
-        ctx.strokeRect(this.x, this.y, 10, 10);
+        if (shouldDraw) {
+            ctx.fillStyle = FOOD_COLOUR;
+            ctx.strokestyle = FOOD_BORDER_COLOUR;
+            ctx.fillRect(this.x, this.y, 10, 10);
+            ctx.strokeRect(this.x, this.y, 10, 10);
+        }
     }
 
 }
