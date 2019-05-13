@@ -1,16 +1,16 @@
 class NN {
     constructor(options) {
         if (options && options.parentNN && options.mutationRate) {
-            this.model = this.mutate(options.parentNN, options.mutationRate)
+            this.model = this.mutate(options.parentNN, options.mutationRate);
         }
         else if (options && options.crossover && options.NN1 && options.NN2 && options.snake1Fit != null && options.snake2Fit != null) {
             // console.log('crossover in NN constructor');
 
-            let { NN1, NN2, snake1Fit, snake2Fit } = options
-            this.model = this.crossover(NN1, NN2, snake1Fit, snake2Fit)
+            let { NN1, NN2, snake1Fit, snake2Fit } = options;
+            this.model = this.crossover(NN1, NN2, snake1Fit, snake2Fit);
         }
         else {
-            this.model = this.createModel()
+            this.model = this.createModel();
         }
     }
 

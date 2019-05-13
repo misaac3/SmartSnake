@@ -8,24 +8,24 @@ class Snake {
         this.dy = 0;
         this.fitness = 0;
         this.changingDirection = false;
-        this.lastPosition = null
-        this.lastDistance = null
+        this.lastPosition = null;
+        this.lastDistance = null;
         // console.log(options);
-        this.prevPositions = []
-        this.prevPositions.push(this.body[0])
+        this.prevPositions = [];
+        this.prevPositions.push(this.body[0]);
         if ((options && options.oldNN)) {
-            this.NN = options.oldNN
+            this.NN = options.oldNN;
         }
         else if (options && options.mutationRate && options.parentNN) {
             // console.log('mutate in snake constructor');
             // console.log(options);
             // this.NN = new NN(options.parentNN, options.mutationRate)
-            this.NN = new NN(options)
+            this.NN = new NN(options);
         }
         else if (options && options.crossover && options.NN1 && options.NN2 && options.snake1Fit != null && options.snake2Fit != null) {
             // console.log('crossover in Snake constructor');
 
-            this.NN = new NN(options)
+            this.NN = new NN(options);
 
         }
         else {

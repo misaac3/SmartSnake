@@ -1,8 +1,8 @@
 class CanvasCtx {
     constructor(w, h, id) {
-        this.width = w
-        this.height = h
-        this.ctx = this.createContext(w, h, id)
+        this.width = w;
+        this.height = h;
+        this.ctx = this.createContext(w, h, id);
 
     }
 

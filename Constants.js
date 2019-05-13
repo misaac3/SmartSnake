@@ -1,5 +1,5 @@
 // let GAME_SPEED = 00;
-let GAME_SPEED = document.querySelector("#gameSpeedrangeInput").value
+let GAME_SPEED = document.querySelector("#gameSpeedrangeInput").value;
 
 const CANVAS_BORDER_COLOUR = 'black';
 const CANVAS_BACKGROUND_COLOUR = "white";
@@ -8,13 +8,13 @@ const SNAKE_BORDER_COLOUR = 'darkgreen';
 const FOOD_COLOUR = 'red';
 const FOOD_BORDER_COLOUR = 'darkred';
 
-const GRID_COLOR = 'grey'
+const GRID_COLOR = 'grey';
 
 const SQUARE_SIZE = 10;
 
-const CANVAS_SIZE = 300
+const CANVAS_SIZE = 300;
 
-let shouldDraw = true
+let shouldDraw = true;
 let noCrossover = false;
 
 // let snake = [

@@ -1,20 +1,20 @@
 
 class GameInstance {
     constructor(canvasID, generationSize) {
-        this.snake = new Snake()
-        this.canvCtx = new CanvasCtx(CANVAS_SIZE, CANVAS_SIZE, canvasID)
-        this.food = new Food(this.snake.body, CANVAS_SIZE, CANVAS_SIZE)
-        this.savedFitness = []
-        this.savedSnakes = []
+        this.snake = new Snake();
+        this.canvCtx = new CanvasCtx(CANVAS_SIZE, CANVAS_SIZE, canvasID);
+        this.food = new Food(this.snake.body, CANVAS_SIZE, CANVAS_SIZE);
+        this.savedFitness = [];
+        this.savedSnakes = [];
         this.timeout = false;
         this.startTime = new Date();
         this.generationSize = generationSize;
-        this.generationNum = 0
-        this.generation = this.newGeneration({ numSnakes: this.generationSize })
-        this.snakesRemaining = this.generation.length
-        this.generationNum++
+        this.generationNum = 0;
+        this.generation = this.newGeneration({ numSnakes: this.generationSize });
+        this.snakesRemaining = this.generation.length;
+        this.generationNum++;
         // console.log('\n\nGENERATION', this.generationNum, '\n\n');
-        document.querySelector("#generation").innerHTML = "generation: " + this.generationNum
+        document.querySelector("#generation").innerHTML = "generation: " + this.generationNum;
     }
 
 
