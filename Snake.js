@@ -166,7 +166,7 @@ class Snake {
     }
 
 
-    getNearbyObstacles = () => {
+    getNearbyObstacles() {
 
         let { x, y } = this.body[0]
         let snake = this.body
@@ -226,38 +226,38 @@ class Snake {
         return obstacles;
     }
 
-    getNearbyObstaclesBool = () => {
+    getNearbyObstaclesBool() {
         let obs = { up: 0, down: 0, left: 0, right: 0 }
         if (this.body[0].x <= 0) {
             // console.log('Near left wall');
-            obs.left = 1
+            obs.left = 1;
         }
         else {
-            obs.left = this.bodyNearItself('left')
+            obs.left = this.bodyNearItself('left');
         }
         if (this.body[0].x >= gameCanvas.width - 10) {
             // console.log('Near Right wall');
-            obs.right = 1
+            obs.right = 1;
         }
         else {
-            obs.right = this.bodyNearItself('right')
+            obs.right = this.bodyNearItself('right');
         }
         if (this.body[0].y <= 0) {
             // console.log('near top wall');
             obs.up = 1
         }
         else {
-            obs.up = this.bodyNearItself('up')
+            obs.up = this.bodyNearItself('up');
         }
         if (this.body[0].y >= gameCanvas.height - 10) {
             // console.log('Near Bottom wall');
-            obs.down = 1
+            obs.down = 1;
         }
         else {
             obs.down = this.bodyNearItself('down')
         }
         // console.log("obs:", obs);
-        return obs
+        return obs;
     }
 
     bodyNearItself(dir) {
