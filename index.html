@@ -20,33 +20,65 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <link href="style.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.bundle.js"></script>
+
 
 </head>
 
+<body>
+    <nav class="navbar navbar-dark bg-dark">
+        <!-- Navbar content -->
+        <a class="navbar-brand" href="#">Train</a>
 
-<div class="container">
-    <div class="row">
-        <!-- <div class="col-12"> -->
-        <div class="col-6" id="ROOTDIV">
-            <div class='col-12' id="score"> 0</div>
-            <hr />
-            <div class='col-12' id="currFitness"></div>
-            <hr />
-            <div class='col-12' id="time"></div>
-            <hr />
-            <div class='col-12' id="bestFitness"></div>
-            <hr />
-            <div class='col-6' id="generation"></div>
-            <div class='col-6' id="snakeNum"></div>
+    </nav>
+    <div class="container">
+        <div class="row">
 
-            <hr />
-        </div>
-        <div class="col-6">
-            <div class="row">
+            <!-- <div class="col-12"> -->
+            <div class="col-6" id="ROOTDIV">
 
-                <form>
-                    Change Game Speed
-                    <div class="form-group row ">
+                <div class='col-12' id="score"> 0</div>
+                <hr />
+                <div class='col-12' id="currFitness"></div>
+                <hr />
+                <div class='col-12' id="time"></div>
+                <hr />
+                <div class='col-12' id="bestFitness"></div>
+                <hr />
+                <div class='col-6' id="generation"></div>
+                <div class='col-6' id="snakeNum"></div>
+
+                <hr />
+            </div>
+            <div class="col-6">
+                <div class="row">
+                    <div class="btn btn-success" id="StartBtn">Click to Start</div>
+                </div>
+
+                <div class="row">
+                    <div class="btn btn-danger" id="StopBtn">Click to Stop</div>
+                </div>
+                <div class="dropdown-divider"></div>
+
+                <!-- <div class="row">
+                    <input class="form-check" type="checkbox"></input>
+                </div> -->
+               
+                <div class="row">
+                    <label for="numGen">Number of Snakes per Generation (50-1000):</label>
+                    <input class="form-control" type="number" id="numGen" min="50" max="1000" value=200>
+                </div>
+                <div class="dropdown-divider"></div>
+
+
+                <div class="row">
+
+                    <label>
+                        Change Game Speed
+                    </label>
+                </div>
+                <div class="row">
+                    <div class="form-group ">
                         <input id="gameSpeedrangeInput" class="form-control-range" type="range" value="0" min="0"
                             max="100" oninput="changeGameSpeed(this.value)" onchange="changeGameSpeed(this.value)" />
                         <input id="gameSpeedTextInput" class="form-text" type="number" value="0" min="0" max="100"
@@ -54,45 +86,47 @@
                             onchange="changeGameSpeed(this.value)" />
 
                     </div>
-                </form>
-            </div>
+                </div>
 
-            <div class="row">
+                <div class="row">
 
-                <body>
-                    <!-- <div class="slidecontainer">
+                    <body>
+                        <!-- <div class="slidecontainer">
                         <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
                     </div> -->
 
-                    <!-- <div class="btn-group" data-toggle="buttons"> -->
-                    <div class="btn btn-success active" id="drawBtn" onclick="shouldDrawBtn()">
-                        Currently drawing snake
-                    </div>
-            </div>
-            <div class="row">
-                <!-- <input type="checkbox" checked data-toggle="toggle"> First -->
+                        <!-- <div class="btn-group" data-toggle="buttons"> -->
+                        <div class="btn btn-success active" id="drawBtn" onclick="shouldDrawBtn()">
+                            Currently drawing snake
+                        </div>
+                </div>
+                <div class="row">
+                    <!-- <input type="checkbox" checked data-toggle="toggle"> First -->
 
-                <!-- <label class="checkbox-inline">
+                    <!-- <label class="checkbox-inline">
                 <input type="checkbox" data-toggle="toggle"> Second
             </label>
             <label class="checkbox-inline">
                 <input type="checkbox" data-toggle="toggle"> Third
             </label> -->
-            </div>
-            <!-- </div> -->
-            <div class="row">
+                </div>
+                <!-- </div> -->
+                <div class="row"> 
+                        <canvas id="myChart" width="400" height="400"></canvas>
+                    </div>
+                <div class="row">
 
-                <div>
-                    <table class="table">
-                        <th>Generation</th>
-                        <th>Best Fitness</th>
-                        <th>Average Fitness</th>
-                        <th>Best Score</th>
-                        <th>Average Score</th>
-                        <th># Snakes Survive</th>
-                        <th># Tensors</th>
-                        <tbody id="pastScores">
-                            <!-- <th>Generation</th>
+                    <div>
+                        <table class="table">
+                            <th>Generation</th>
+                            <th>Best Fitness</th>
+                            <th>Average Fitness</th>
+                            <th>Best Score</th>
+                            <th>Average Score</th>
+                            <th># Snakes Survive</th>
+                            <th># Tensors</th>
+                            <tbody id="pastScores">
+                                <!-- <th>Generation</th>
                         <th>Best Fitness</th>
                         <th>Average Fitness</th>
                         <th>Best Score</th>
@@ -101,47 +135,50 @@
                         <th># Tensors</th> -->
 
 
-                        </tbody>
-                        <th>Generation</th>
-                        <th>Best Fitness</th>
-                        <th>Average Fitness</th>
-                        <th>Best Score</th>
-                        <th>Average Score</th>
-                        <th># Snakes Survive</th>
-                        <th># Tensors</th>
-                        <!-- <tfoot>Generation</tfoot>
+                            </tbody>
+                            <th>Generation</th>
+                            <th>Best Fitness</th>
+                            <th>Average Fitness</th>
+                            <th>Best Score</th>
+                            <th>Average Score</th>
+                            <th># Snakes Survive</th>
+                            <th># Tensors</th>
+                            <!-- <tfoot>Generation</tfoot>
                     <tfoot>Best Fitness</tfoot>
                     <tfoot>Average Fitness</tfoot>
                     <tfoot>Best Score</tfoot>
                     <tfoot>Average Score</tfoot>
                     <tfoot># Snakes Survive</tfoot>
                     <tfoot># Tensors</tfoot> -->
-                    </table>
+                        </table>
+                    </div>
                 </div>
+                <hr />
+
             </div>
-            <hr />
 
+
+            <!-- </div> -->
         </div>
-
-
-        <!-- </div> -->
     </div>
-</div>
 
 </body>
 <script src="tf.min.js"></script>
 <script src="Snake.js"></script>
 <script src="Constants.js"></script>
 <script src="GameInstance.js"></script>
+<!-- <script src="GameInstance-beforeMultCanv.js"></script> -->
+
 <script src="Food.js"></script>
 <script src="CanvasCtx.js"></script>
-
+<script src="GameInstanceGroup.js"></script>
 <script src="NN.js"></script>
 
 <!-- <script src="script.js"></script> -->
 <script src="main.js"></script>
 <script src="sweep.js"></script>
 <script src="helper.js"></script>
+
 
 
 </html>

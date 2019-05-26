@@ -16,7 +16,7 @@ const CANVAS_SIZE = 300;
 
 let shouldDraw = true;
 let noCrossover = false;
-
+let initialized = false;
 // let snake = [
 //     { x: 50, y: 50 },
 //     { x: 40, y: 50 },
@@ -85,3 +85,69 @@ function onKeydownGameSpeed(e) {
     return false
 
 }
+let gi = null;
+document.querySelector("#StartBtn").addEventListener('click', () => {
+    if (gi) gi.stop = false;
+    tf.tidy(() => {
+        // gi.generationSize = document.getElementById('numGen').value
+
+        // gi.snakesRemaining = gi.generationSize
+        // gi.start()
+
+
+        genSize = document.getElementById('numGen').value
+
+        gi = new GameInstance('gameCanvas', genSize)
+        document.addEventListener("keydown", gi.changeDirection.bind(gi));
+        gi.start()
+
+    })
+});
+document.querySelector("#StopBtn").addEventListener('click', async () => {
+    gi.stop = true
+    let d = new Date()//.toUTCString()
+    let dateStr = String(d.getMonth()) + "-" + String(d.getDate()) + "-" + String(d.getFullYear()) + "_" + String(d.getHours()) + ":" + String(d.getMinutes()) + ":" + String(d.getSeconds())
+    console.log(dateStr);
+    if (gi.bestSnake) await gi.bestSnake.NN.model.save('downloads://snake-model-' + dateStr);
+
+});
+
+
+var graphCtx = document.getElementById('myChart');
+var myChart = new Chart(graphCtx, {
+    type: 'line',
+    data: {
+        labels: [],
+        // labels: ['Average Score'],
+        datasets: [{
+            label: 'Average Score per Generation',
+            data: [],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+});

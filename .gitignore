@@ -4,3 +4,9 @@ package-lock.json
 *.pdf
 
 bootstrap*
+boot*
+GameInstance.-*
+
+Game.js
+GameInstanceGroup.js
+.gitignore

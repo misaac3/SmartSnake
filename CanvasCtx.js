@@ -36,8 +36,8 @@ class CanvasCtx {
         //  Select the colour for the border of the canvas
         this.ctx.strokestyle = CANVAS_BORDER_COLOUR;
         // Draw a "filled" rectangle to cover the entire canvas
-        this.ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+        this.ctx.fillRect(0, 0, this.width, this.height);
         // Draw a "border" around the entire canvas
-        this.ctx.strokeRect(0, 0, gameCanvas.width, gameCanvas.height);
+        this.ctx.strokeRect(0, 0, this.width, this.height);
     }
 }
