@@ -3,7 +3,12 @@
 ###### [or to just play snake](misaac3.github.io/SmartSnake/play.html)
 A nueral network powered AI that plays the classic [Snake arcade game](https://en.wikipedia.org/wiki/Snake_(video_game_genre)) using a genetic algorithm.
 
+<!-- 
 ![Smart Snake Example Gif](https://i.imgur.com/yTeFQP2.gif)
+(direct link) https://i.imgur.com/yTeFQP2.gif
+ -->
+<img src="/gif/SmartSnake.gif?raw=true">
+
 ## Technology Used
 
 - HTML/CSS
