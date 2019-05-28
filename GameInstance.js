@@ -1,6 +1,12 @@
+let myChart = null;
 
 class GameInstance {
-    constructor(canvasID, generationSize) {
+    constructor(canvasID, generationSize, playMode) {
+        this.initialize()
+        this.started = false
+
+        this.playMode = playMode ? playMode : false;
+
         this.snake = new Snake();
         this.canvasNum = 0;
         this.canvCtx = new CanvasCtx(CANVAS_SIZE, CANVAS_SIZE, canvasID + String(this.canvasNum++));
@@ -19,6 +25,11 @@ class GameInstance {
         this.savedAvgScores = []
         // console.log('\n\nGENERATION', this.generationNum, '\n\n');
         document.querySelector("#generation").innerHTML = "generation: " + this.generationNum;
+        // this.initializeGraph()
+        if (this.playMode) {
+            GAME_SPEED = 100
+            this.start()
+        }
     }
 
 
@@ -30,9 +41,19 @@ class GameInstance {
         // console.log('');
 
         // console.log(`snake #${(this.generationSize - this.snakesRemaining)}`);
-        document.querySelector("#snakeNum").innerHTML = `snake #${(this.generationSize - this.snakesRemaining)}`
+        document.querySelector("#snakeNum").innerHTML =
+            `snake #${(this.generationSize - this.snakesRemaining)}`
+        // this.snakesRemaining = this.generation.length;
 
+
+        console.log('before:', this.snake);
+        console.log(this.snakesRemaining);
+        console.log(this.generation);
         this.snake = this.generation[this.snakesRemaining]
+        // this.snake = new Snake()
+        // this.snakesRemaining--
+        console.log('after:', this.snake);
+
         this.food = new Food(this.snake.body, CANVAS_SIZE, CANVAS_SIZE)
 
     }
@@ -57,7 +78,7 @@ class GameInstance {
             return
         }
         // If the game ended return early to stop game
-        if (this.didGameEnd() || this.timeout) {
+        if (this.snakesRemaining > -1 && (this.didGameEnd() || this.timeout)) {
             tf.tidy(() => {// console.log(this.generation[0]);
 
                 this.timeout = false;
@@ -85,7 +106,8 @@ class GameInstance {
             setTimeout(function onTick() {
 
                 tf.tidy(() => {
-                    if ((new Date() - this.startTime > 15000 && this.snake.score < 2) || new Date() - this.startTime > (180 * 1000)
+                    if ((new Date() - this.startTime > 15000 && this.snake.score < 2)
+                        || new Date() - this.startTime > (180 * 1000)
                         || (new Date() - this.startTime > 5000 && this.snake.score < 1)) {
                         this.timeout = true
 
@@ -96,14 +118,19 @@ class GameInstance {
                     this.food.drawFood(this.canvCtx.ctx);
                     this.snake.advanceSnake(this.food, CANVAS_SIZE, CANVAS_SIZE);
                     this.snake.drawSnake(this.canvCtx.ctx);
-                    let inputs = this.createInputs()
-                    this.snake.predict(inputs)
+                    if (!this.playMode) {
+                        let inputs = this.createInputs()
+                        this.snake.predict(inputs)
+                    }
                     document.querySelector("#currFitness").innerHTML = "fitness: " + this.snake.fitness
                     document.querySelector("#time").innerHTML = "time: " + ((new Date() - this.startTime) / 1000) + " sec"
                 })
                 this.start();
 
             }.bind(this), GAME_SPEED)
+        }
+        else if (this.playMode) {
+            this.start()
         }
         else {
             tf.tidy(() => {
@@ -116,7 +143,8 @@ class GameInstance {
                     percentageOfTop: 0.1,
                     fitnessCutoff: 30
                 })
-
+                document.querySelector("#snakeNum").innerHTML =
+                    `snake #${(this.generationSize - this.snakesRemaining)}`
                 this.generationNum++
                 console.log('\n\nGENERATION', this.generationNum, '\n\n');
                 document.querySelector("#generation").innerHTML = "generation: " + this.generationNum
@@ -384,7 +412,98 @@ class GameInstance {
 
     }
 
+    initialize() {
+        this.initializeGraph()
+        this.addStartStopListeners()
+    }
 
+    addGenerationNumListener() {
+        document.querySelector("#numGen").addEventListener('click', () => {
+
+
+            this.generation = this.newGeneration({ numSnakes: this.generationSize });
+            this.snakesRemaining = this.generation.length;
+
+
+
+
+        })
+    }
+
+    addStartStopListeners() {
+
+        document.querySelector("#StartBtn").addEventListener('click', () => {
+            if (gi) gi.stop = false;
+            tf.tidy(() => {
+                // gi.generationSize = document.getElementById('numGen').value
+
+                // gi.snakesRemaining = gi.generationSize
+                // gi.start()
+
+                if (!this.started) {
+                    // let generationSize = document.querySelector("#numGen").value
+                    // this.generationSize = generationSize;
+                    // this.generation = this.newGeneration({ numSnakes: this.generationSize });
+                    // this.snakesRemaining = this.generation.length;
+                }
+
+                this.started = true;
+
+                document.addEventListener("keydown", gi.changeDirection.bind(gi));
+                gi.start()
+
+            })
+        });
+        document.querySelector("#StopBtn").addEventListener('click', async () => {
+            gi.stop = true
+            let d = new Date()//.toUTCString()
+            let dateStr = String(d.getMonth() + 1) + "-" + String(d.getDate()) + "-" + String(d.getFullYear()) + "_" + String(d.getHours()) + ":" + String(d.getMinutes()) + ":" + String(d.getSeconds())
+            console.log(dateStr);
+            if (gi.bestSnake) await gi.bestSnake.NN.model.save('downloads://snake-model-' + dateStr);
+
+        });
+    }
+
+    initializeGraph() {
+        let graphCtx = document.getElementById('myChart');
+        myChart = new Chart(graphCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                // labels: ['Average Score'],
+                datasets: [{
+                    label: 'Average Score per Generation',
+                    data: [],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+    }
 
 
 }

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>SNAKE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--Local files-->
+    <!-- <script src="bootstrap-toggle.min.js"></script>
+    <link rel="stylesheet" href="bootstrap-toggle.min.css">
+    </link>
+    <link rel="stylesheet" href="bootstrap.min.css">
+    </link>
+    <script src="bootstrap.min.js"></script> -->
+
+
+    <!--CDN-->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link href="style.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.bundle.js"></script>
+
+
+</head>
+
+<body>
+    <nav class="navbar navbar-dark bg-dark">
+        <!-- Navbar content -->
+        <a class="navbar-brand" href="index.html">Train</a>
+        <a class="navbar-brand" href="">Play</a>
+
+
+    </nav>
+    <div class="container">
+        <div class="row">
+
+            <!-- <div class="col-12"> -->
+            <div class="col-6" id="ROOTDIV">
+
+                <div class='col-12' id="score">Score: 0</div>
+                <hr />
+            </div>
+            <div class="col-6">
+
+
+                <!-- <div class="row">
+                    <input class="form-check" type="checkbox"></input>
+                </div> -->
+
+
+
+
+                <div class="row">
+
+                    <label>
+                        Change Game Speed
+                    </label>
+                </div>
+                <div class="row">
+                    <div class="form-group ">
+                        <input id="gameSpeedrangeInput" class="form-control-range" type="range" value="0" min="0"
+                            max="100" oninput="changeGameSpeed(this.value)" onchange="changeGameSpeed(this.value)" />
+                        <input id="gameSpeedTextInput" class="form-text" type="number" value="0" min="0" max="100"
+                            onsubmit="onKeydownGameSpeed(this)" onkeydown="onKeydownGameSpeed(this)"
+                            onchange="changeGameSpeed(this.value)" />
+
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div id="topScore">High Score: 0</div>
+                </div>
+                <div class="row">
+                    <ul id="pastScores"> </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+<script src="tf.min.js"></script>
+<script src="Snake.js"></script>
+<script src="Constants.js"></script>
+<!-- <script src="GameInstance.js"></script> -->
+<script src="GameInstancePlay.js"></script>
+
+<!-- <script src="GameInstance-beforeMultCanv.js"></script> -->
+
+<script src="Food.js"></script>
+<script src="CanvasCtx.js"></script>
+<script src="GameInstanceGroup.js"></script>
+<script src="NN.js"></script>
+
+<!-- <script src="script.js"></script> -->
+<script src="main.js"></script>
+<script src="sweep.js"></script>
+<script src="helper.js"></script>
+<script>
+    // let gi = new GameInstance('gameCanvas',200)
+
+    let playGi = new GameInstancePlay('gameCanvas', 200, true);
+    document.addEventListener("keydown", playGi.changeDirection.bind(playGi));
+    // gi.start()
+    playGi.start()
+</script>
+
+
+</html>

@@ -3,6 +3,7 @@ class CanvasCtx {
         this.width = w;
         this.height = h;
         this.ctx = this.createContext(w, h, id);
+        console.log('canvas CTX constructor' );
 
     }
 

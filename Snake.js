@@ -44,6 +44,7 @@ class Snake {
             console.log(mult);
         }
         if (this.fitness >= 20) console.log(`fitness ${this.fitness}`)
+        this.snakeDied = true
 
     }
     drawSnake(ctx) {
