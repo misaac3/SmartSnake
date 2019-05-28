@@ -15,7 +15,7 @@ class GameInstance {
         this.savedSnakes = [];
         this.bestSnake = null;
         this.timeout = false;
-        this.startTime = new Date();
+        // this.startTime = new Date();
         this.generationSize = generationSize;
         this.generationNum = 0;
         this.generation = this.newGeneration({ numSnakes: this.generationSize });
@@ -98,7 +98,7 @@ class GameInstance {
                 this.food.createFood(this.snake.body, CANVAS_SIZE, CANVAS_SIZE);
                 this.food.drawFood(this.canvCtx.ctx);
                 this.snake.advanceSnake(this.food, CANVAS_SIZE, CANVAS_SIZE);
-                this.startTime = new Date()
+                this.snake.startTime = new Date()
             })
             this.start()
         }
@@ -106,9 +106,13 @@ class GameInstance {
             setTimeout(function onTick() {
 
                 tf.tidy(() => {
-                    if ((new Date() - this.startTime > 15000 && this.snake.score < 2)
-                        || new Date() - this.startTime > (180 * 1000)
-                        || (new Date() - this.startTime > 5000 && this.snake.score < 1)) {
+                    let newDate = new Date()
+                    console.log(this.snake.timeOfLastFood);
+                    if ((newDate - this.snake.startTime > 15000 && this.snake.score < 2)
+                        || newDate - this.snake.startTime > (300 * 1000)
+                        || (this.snake.timeOfLastFood !== -1 && (newDate - this.snake.timeOfLastFood > (15 * 1000)))
+                        || (newDate - this.snake.startTime > 5000 && this.snake.score < 1)) {
+                        // if (this.shouldTimeout()) {
                         this.timeout = true
 
                     }
@@ -123,7 +127,7 @@ class GameInstance {
                         this.snake.predict(inputs)
                     }
                     document.querySelector("#currFitness").innerHTML = "fitness: " + this.snake.fitness
-                    document.querySelector("#time").innerHTML = "time: " + ((new Date() - this.startTime) / 1000) + " sec"
+                    document.querySelector("#time").innerHTML = "time: " + ((new Date() - this.snake.startTime) / 1000) + " sec"
                 })
                 this.start();
 
@@ -155,7 +159,7 @@ class GameInstance {
                     this.savedSnakes[this.savedSnakes.length - 1]);
                 this.savedSnakes = []
                 this.timeout = false;
-                this.startTime = new Date();
+                this.snake.startTime = new Date();
                 // this.generation = this.newGeneration({ numSnakes: this.generationSize })
                 this.snakesRemaining = this.generation.length
                 console.log(this.generation);
@@ -180,7 +184,6 @@ class GameInstance {
         // let foodPos = { x: this.food.x, y: this.food.y }//2
         let foodAngle = this.getFoodAngle() // 1
         let foodLinObj = this.getFoodLinear() //4
-
 
 
         let inputs = [
@@ -216,78 +219,78 @@ class GameInstance {
 
 
     newGeneration(options) {
-        // return tf.tidy(() => {
-        let generation = [];
-        let { numSnakes, mutationRate, lastGen, percentageOfTop, fitnessCutoff } = options
-        if (mutationRate != null && lastGen != null) {
-            let topSnakes = lastGen
-                .sort((a, b) => b.fitness - a.fitness)
-                .slice(0, Math.floor(lastGen.length * percentageOfTop))
-                .filter((x) => x.fitness > fitnessCutoff)
+        return tf.tidy(() => {
+            let generation = [];
+            let { numSnakes, mutationRate, lastGen, percentageOfTop, fitnessCutoff } = options
+            if (mutationRate != null && lastGen != null) {
+                let topSnakes = lastGen
+                    .sort((a, b) => b.fitness - a.fitness)
+                    .slice(0, Math.floor(lastGen.length * percentageOfTop))
+                    .filter((x) => x.fitness > fitnessCutoff)
 
-            topSnakes.map((x) => console.log(x.fitness))
-            for (let i = 0; i < topSnakes.length; i++) {
-                for (let j = 0; j < Math.floor(1 / percentageOfTop * 0.75); j++) {
-                    // let ind = (j + (j * (i + 1)));
-                    let ind = ((i * Math.floor(1 / percentageOfTop * 0.75) - 1)) + j
-                    if (j == 0) {
-                        generation[ind] = new Snake({ oldNN: topSnakes[i].NN })
-                    }
-                    else {
-                        if (j % 2 == 0 || noCrossover) {
-                            generation[ind] = new Snake({ mutationRate, parentNN: topSnakes[i].NN })
+                topSnakes.map((x) => console.log(x.fitness))
+                for (let i = 0; i < topSnakes.length; i++) {
+                    for (let j = 0; j < Math.floor(1 / percentageOfTop * 0.75); j++) {
+                        // let ind = (j + (j * (i + 1)));
+                        let ind = ((i * Math.floor(1 / percentageOfTop * 0.75) - 1)) + j
+                        if (j == 0) {
+                            generation[ind] = new Snake({ oldNN: topSnakes[i].NN })
                         }
                         else {
-                            // console.log('crossover in newGen');
+                            if (j % 2 == 0 || noCrossover) {
+                                generation[ind] = new Snake({ mutationRate, parentNN: topSnakes[i].NN })
+                            }
+                            else {
+                                // console.log('crossover in newGen');
 
-                            let randSnakeInd = Math.floor(Math.random() * topSnakes.length);
-                            generation[ind] = new Snake({
-                                crossover: true,
-                                NN1: topSnakes[i].NN,
-                                NN2: topSnakes[randSnakeInd].NN,
-                                snake1Fit: topSnakes[i].fitness,
-                                snake2Fit: topSnakes[randSnakeInd].fitness
+                                let randSnakeInd = Math.floor(Math.random() * topSnakes.length);
+                                generation[ind] = new Snake({
+                                    crossover: true,
+                                    NN1: topSnakes[i].NN,
+                                    NN2: topSnakes[randSnakeInd].NN,
+                                    snake1Fit: topSnakes[i].fitness,
+                                    snake2Fit: topSnakes[randSnakeInd].fitness
 
-                            })
+                                })
+                            }
+
+
                         }
+                    }
+                }
 
+
+                if (lastGen.length - generation.length > 0) {
+                    let mutatedSnakes = Math.floor((lastGen.length - generation.length) * 0.5)
+                    for (let i = 0; i < mutatedSnakes && topSnakes.length > 0; i++) {
+                        let ind = Math.floor(Math.random() * topSnakes.length)
+                        let s = generation[ind]
+                        // console.log(ind);
+                        // console.log(s);
+                        generation[generation.length] =
+                            new Snake({ mutationRate, parentNN: s.NN })
+                        // console.log(generation.length);
+
+                    }
+                    while (lastGen.length - generation.length > 0) {
+                        generation[generation.length] = new Snake()
+                        // console.log(generation.length);
 
                     }
                 }
-            }
-
-
-            if (lastGen.length - generation.length > 0) {
-                let mutatedSnakes = Math.floor((lastGen.length - generation.length) * 0.5)
-                for (let i = 0; i < mutatedSnakes && topSnakes.length > 0; i++) {
-                    let ind = Math.floor(Math.random() * topSnakes.length)
-                    let s = generation[ind]
-                    // console.log(ind);
-                    // console.log(s);
-                    generation[generation.length] =
-                        new Snake({ mutationRate, parentNN: s.NN })
-                    // console.log(generation.length);
-
+                else if (lastGen.length - generation.length > 0) {
+                    generation = generation.slice(0, lastGen.length)
                 }
-                while (lastGen.length - generation.length > 0) {
-                    generation[generation.length] = new Snake()
-                    // console.log(generation.length);
+            }
+            else {
+                for (let i = 0; i < numSnakes; i++) {
+                    generation[i] = new Snake()
+                    // console.log(i);
 
                 }
             }
-            else if (lastGen.length - generation.length > 0) {
-                generation = generation.slice(0, lastGen.length)
-            }
-        }
-        else {
-            for (let i = 0; i < numSnakes; i++) {
-                generation[i] = new Snake()
-                // console.log(i);
-
-            }
-        }
-        return generation;
-        // }        )
+            return generation;
+        })
     }
 
     updateScoreTable() {
@@ -385,7 +388,8 @@ class GameInstance {
         let diffY = foody - y;
 
         let theta = (Math.atan2(diffY, diffX) * 180 / Math.PI) + 180
-        return theta / 180
+        // console.log('theta', theta);
+        return theta / 360
 
     }
 
@@ -456,7 +460,7 @@ class GameInstance {
         });
         document.querySelector("#StopBtn").addEventListener('click', async () => {
             gi.stop = true
-            let d = new Date()//.toUTCString()
+            let d = new Date()
             let dateStr = String(d.getMonth() + 1) + "-" + String(d.getDate()) + "-" + String(d.getFullYear()) + "_" + String(d.getHours()) + ":" + String(d.getMinutes()) + ":" + String(d.getSeconds())
             console.log(dateStr);
             if (gi.bestSnake) await gi.bestSnake.NN.model.save('downloads://snake-model-' + dateStr);
@@ -505,235 +509,15 @@ class GameInstance {
         });
     }
 
+    shouldTimeout() {
+        let newDate = new Date();
+        if (
+            (newDate - this.snake.startTime > 15000 && this.snake.score < 2)
+            || newDate - this.snake.startTime > (300 * 1000)
+            || newDate - this.snake.timeOfLastFood > (15 * 1000)
+            || (newDate - this.snake.startTime > 5000 && this.snake.score < 1)
+        ) { return true }
+        return false;
+    }
 
 }
-
-
-
-// class GameInstance {
-//     constructor(canvasID, generationSize, group) {
-//         console.log(group);
-//         this.group = group
-//         this.snake = new Snake();
-//         this.canvasNum = 0;
-//         // this.canvases = []
-//         // for (let i = 0; i < 2; i++) {
-//         //     this.canvases[i] = new CanvasCtx(CANVAS_SIZE, CANVAS_SIZE, canvasID + String(this.canvasNum++));
-
-//         // }
-//         this.canvCtx = new CanvasCtx(CANVAS_SIZE, CANVAS_SIZE, canvasID);
-//         //+ String(this.canvasNum++));
-//         this.food = new Food(this.snake.body, CANVAS_SIZE, CANVAS_SIZE);
-//         this.savedFitness = [];
-//         this.savedSnakes = [];
-//         this.timeout = false;
-//         this.startTime = new Date();
-
-//     }
-
-
-
-//     resetGame() {
-
-//         document.getElementById('score').innerHTML = 'score: ' + 0;
-//         document.getElementById('score').style.backgroundColor = ''
-//         // console.log('');
-
-//         // console.log(`snake #${(this.generationSize - this.snakesRemaining)}`);
-//         document.querySelector("#snakeNum").innerHTML = `snake #${(this.generationSize - this.snakesRemaining)}`
-
-//         this.snake = this.generation[this.snakesRemaining]
-//         this.food = new Food(this.snake.body, CANVAS_SIZE, CANVAS_SIZE)
-
-//     }
-
-//     didGameEnd() {
-//         for (let i = 4; i < this.snake.body.length; i++) {
-//             if (this.snake.body[i].x === this.snake.body[0].x && this.snake.body[i].y === this.snake.body[0].y) return true
-//         }
-//         const hitLeftWall = this.snake.body[0].x < 0;
-//         const hitRightWall = this.snake.body[0].x > this.canvCtx.width - 10;
-//         const hitToptWall = this.snake.body[0].y < 0;
-//         const hitBottomWall = this.snake.body[0].y > this.canvCtx.height - 10;
-//         return hitLeftWall || hitRightWall || hitToptWall || hitBottomWall
-//     }
-
-
-
-//     start() {
-
-//         // If the game ended return early to stop game
-//         if (this.didGameEnd() || this.timeout) {
-//             tf.tidy(() => {// console.log(this.generation[0]);
-
-//                 this.timeout = false;
-//                 this.snake.died();
-//                 this.snakesRemaining--;
-//                 this.savedFitness.push(this.snake.fitness)
-//                 this.savedSnakes.push(this.snake)
-//                 // console.log(this.snake.moves);
-//                 this.savedFitness = this.savedFitness.sort(function (a, b) { return a - b })
-//                 // console.log('Best Fitness: ', this.savedFitness[this.savedFitness.length - 1]);
-//                 document.querySelector("#bestFitness").innerHTML = "best fitness: " + (Math.round(this.savedFitness[this.savedFitness.length - 1] * 100) / 100)
-
-
-//                 this.resetGame();
-//                 this.canvCtx.clearCanvas();
-//                 this.snake.drawSnake(this.canvCtx.ctx);
-//                 this.food.createFood(this.snake.body, CANVAS_SIZE, CANVAS_SIZE);
-//                 this.food.drawFood(this.canvCtx.ctx);
-//                 this.snake.advanceSnake(this.food, CANVAS_SIZE, CANVAS_SIZE);
-//                 this.startTime = new Date()
-//             })
-//             this.start()
-//         }
-//         else if (this.snakesRemaining > 0) {
-//             setTimeout(function onTick() {
-
-//                 tf.tidy(() => {
-//                     if ((new Date() - this.startTime > 15000 && this.snake.score < 2) || new Date() - this.startTime > (180 * 1000)
-//                         || (new Date() - this.startTime > 5000 && this.snake.score < 1)) {
-//                         this.timeout = true
-
-//                     }
-
-//                     this.snake.changingDirection = false;
-//                     this.canvCtx.clearCanvas();
-//                     this.food.drawFood(this.canvCtx.ctx);
-//                     this.snake.advanceSnake(this.food, CANVAS_SIZE, CANVAS_SIZE);
-//                     this.snake.drawSnake(this.canvCtx.ctx);
-//                     let inputs = this.createInputs()
-//                     this.snake.predict(inputs)
-//                     document.querySelector("#currFitness").innerHTML = "fitness: " + this.snake.fitness
-//                     document.querySelector("#time").innerHTML = "time: " + ((new Date() - this.startTime) / 1000) + " sec"
-//                 })
-//                 this.start();
-
-//             }.bind(this), GAME_SPEED)
-//         }
-//         else {
-//             tf.tidy(() => {
-//                 this.updateScoreTable()
-
-//                 this.generation = this.newGeneration({
-//                     numSnakes: this.generationSize,
-//                     mutationRate: 0.1,
-//                     lastGen: this.generation,
-//                     percentageOfTop: 0.1
-//                 })
-
-//                 this.generationNum++
-//                 console.log('\n\nGENERATION', this.generationNum, '\n\n');
-//                 document.querySelector("#generation").innerHTML = "generation: " + this.generationNum
-//                 this.snake = this.generation[0]
-//                 this.food = new Food(this.snake.body, CANVAS_SIZE, CANVAS_SIZE)
-//                 this.savedFitness = []
-//                 this.savedSnakes = []
-//                 this.timeout = false;
-//                 this.startTime = new Date();
-//                 // this.generation = this.newGeneration({ numSnakes: this.generationSize })
-//                 this.snakesRemaining = this.generation.length
-//                 console.log(this.generation);
-//             })
-//             this.start()
-//         }
-//     }
-
-//     changeDirection(e) {
-//         // console.log(this, e);
-//         this.snake.changeDirection(e);
-//         this.snake.changingDirection = false;
-//     }
-
-//     createInputs() {
-//         // let obs = this.snake.getNearbyObstacles(); //8
-//         let obs = this.snake.getNearbyObstaclesBool(this.canvCtx.width, this.canvCtx.height) // 4
-//         // let dx = this.snake.dx//1
-//         // let dy = this.snake.dy//1
-//         // let x = this.snake.body[0].x//1
-//         // let y = this.snake.body[0].y//1
-//         // let foodPos = { x: this.food.x, y: this.food.y }//2
-//         let foodAngle = this.getFoodAngle() // 1
-//         let foodLinObj = this.getFoodLinear() //4
-
-//         9
-
-//         let inputs = [
-//             // obs.up.x,
-//             // obs.up.y,
-//             // obs.down.x,
-//             // obs.down.y,
-//             // obs.left.x,
-//             // obs.left.y,
-//             // obs.right.x,
-//             // obs.right.y,
-//             obs.up,
-//             obs.down,
-//             obs.left,
-//             obs.right,
-//             // dx,
-//             // dy,
-//             // x,
-//             // y,
-//             // foodPos.x,
-//             // foodPos.y,
-//             foodLinObj.up,
-//             foodLinObj.down,
-//             foodLinObj.left,
-//             foodLinObj.right,
-//             // foodAngle
-
-//         ]
-
-//         // console.log(inputs);
-//         return inputs
-//     }
-
-
-
-//     getFoodAngle() {
-//         let x = this.snake.body[0].x//1
-//         let y = this.snake.body[0].y//1
-//         let foodx = this.food.x
-//         let foody = this.food.y
-//         //2
-//         let diffX = foodx - x;
-//         let diffY = foody - y;
-
-//         let theta = (Math.atan2(diffY, diffX) * 180 / Math.PI) + 180
-//         return theta / 180
-
-//     }
-
-//     getFoodLinear() {
-//         let obj = {
-//             up: 0,
-//             down: 0,
-//             left: 0,
-//             right: 0
-//         }
-
-//         let fx = this.food.x
-//         let fy = this.food.y
-
-//         let x = this.snake.body[0].x
-//         let y = this.snake.body[0].y
-
-//         if (x === fx && fy <= y) obj.up = 1
-//         if (x === fx && fy >= y) obj.down = 1
-//         if (y === fy && fx >= x) obj.left = 1
-//         if (y === fy && fx >= x) obj.right = 1
-//         // console.log("foodObj: ",obj);
-//         return obj
-
-//     }
-
-
-//     updateScoreTable() {
-//         console.log(this.group);
-//         this.group.updateScoreTable()
-//     }
-
-// }
-
-

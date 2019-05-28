@@ -10,6 +10,8 @@ class Snake {
         this.changingDirection = false;
         this.lastPosition = null;
         this.lastDistance = null;
+        this.startTime = new Date();
+        this.timeOfLastFood = -1;
         // console.log(options);
         this.prevPositions = [];
         this.prevPositions.push(this.body[0]);
@@ -93,6 +95,7 @@ class Snake {
             this.lastPosition = null
             this.lastDistance = null
             this.fitness += 100
+            this.timeOfLastFood = new Date()
 
         } else {
             // Remove the last part of snake body
