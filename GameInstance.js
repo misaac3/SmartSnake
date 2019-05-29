@@ -1,8 +1,11 @@
 class GameInstance {
     constructor(canvasID, generationSize) {
         this.chart = null;
-
-        this.initialize()
+        this.table = $(document).ready(function () {
+            gi.table = $('#dataTable').DataTable({ searching: false });
+        });;
+        this.pastGenStats = []
+        this.initialize();
         this.started = false
 
         // this.playMode = playMode ? playMode : false;
@@ -22,7 +25,7 @@ class GameInstance {
         this.snakesRemaining = this.generation.length;
         this.generationNum++;
         this.stop = false;
-        this.savedAvgScores = []
+        this.savedAvgScores = [];
         // console.log('\n\nGENERATION', this.generationNum, '\n\n');
         document.querySelector("#generation").innerHTML = "generation: " + this.generationNum;
         // this.initializeGraph()
@@ -295,16 +298,16 @@ class GameInstance {
     }
 
     updateScoreTable() {
-        let pastScoreUL = document.getElementById("pastScores")
+        // let pastScoreUL = document.getElementById("pastScores")
 
-        let row = document.createElement("TR");
-        let bestFitnessNode = document.createElement("TD");
-        let genNode = document.createElement("TD");
-        let avgFitnessNode = document.createElement("TD");
-        let bestScoreNode = document.createElement("TD");
-        let avgScoreNode = document.createElement("TD");
-        let savedSnakesNode = document.createElement("TD");
-        let memNode = document.createElement("TD");
+        // let row = document.createElement("TR");
+        // let bestFitnessNode = document.createElement("TD");
+        // let genNode = document.createElement("TD");
+        // let avgFitnessNode = document.createElement("TD");
+        // let bestScoreNode = document.createElement("TD");
+        // let avgScoreNode = document.createElement("TD");
+        // let savedSnakesNode = document.createElement("TD");
+        // let memNode = document.createElement("TD");
 
 
         let numSnakesSaved = this.generation
@@ -332,39 +335,55 @@ class GameInstance {
         let averageScore = (arr) => (arr.map((x) => x.score).reduce((a, b) => a + b)) / arr.length
 
         let as = averageScore(this.generation)
-        as = Math.round(as * 100) / 100
+        averageScore = Math.round(as * 100) / 100
         this.savedAvgScores.push(as)
 
-        let avgFitnessText = document.createTextNode(af)
-        let bestFitnessText = document.createTextNode(bestFitness)
-        let genText = document.createTextNode(this.generationNum)
+        // let avgFitnessText = document.createTextNode(af)
+        // let bestFitnessText = document.createTextNode(bestFitness)
+        // let genText = document.createTextNode(this.generationNum)
 
-        let bestScoreText = document.createTextNode(bestScore)
-        let avgScoreText = document.createTextNode(as)
+        // let bestScoreText = document.createTextNode(bestScore)
+        // let avgScoreText = document.createTextNode(averageScore)
 
-        let savedSnakesText = document.createTextNode(numSnakesSaved)
-        let memText = document.createTextNode(tf.memory().numTensors)
+        // let savedSnakesText = document.createTextNode(numSnakesSaved)
+        // let memText = document.createTextNode(tf.memory().numTensors)
 
 
-        avgFitnessNode.appendChild(avgFitnessText)
-        bestFitnessNode.appendChild(bestFitnessText)
-        genNode.appendChild(genText)
-        avgScoreNode.appendChild(avgScoreText)
-        bestScoreNode.appendChild(bestScoreText)
-        savedSnakesNode.appendChild(savedSnakesText)
-        memNode.appendChild(memText)
+        // avgFitnessNode.appendChild(avgFitnessText)
+        // bestFitnessNode.appendChild(bestFitnessText)
+        // genNode.appendChild(genText)
+        // avgScoreNode.appendChild(avgScoreText)
+        // bestScoreNode.appendChild(bestScoreText)
+        // savedSnakesNode.appendChild(savedSnakesText)
+        // memNode.appendChild(memText)
 
-        row.appendChild(genNode)
-        row.appendChild(bestFitnessNode)
-        row.appendChild(avgFitnessNode)
-        row.appendChild(bestScoreNode)
-        row.appendChild(avgScoreNode)
-        row.appendChild(savedSnakesNode)
-        row.appendChild(memNode)
+        // row.appendChild(genNode)
+        // row.appendChild(bestFitnessNode)
+        // row.appendChild(avgFitnessNode)
+        // row.appendChild(bestScoreNode)
+        // row.appendChild(avgScoreNode)
+        // row.appendChild(savedSnakesNode)
+        // row.appendChild(memNode)
 
-        pastScoreUL.appendChild(row)
+        // pastScoreUL.appendChild(row)
+        this.pastGenStats.push([
+            this.generationNum,
+            bestFitness,
+            af,
+            bestScore,
+            averageScore,
+            numSnakesSaved,
+            tf.memory().numTensors
 
+        ])
+        this.table.clear();
+        this.table.rows.add(this.pastGenStats);
+        this.table.draw(false);
         this.updateGraph(this.chart, this.generationNum, as)
+        // this.table.draw()
+        // console.log(this.table.draw);
+        // this.table = $('#statsTable').DataTable();
+        // this.table.draw()
 
     }
 

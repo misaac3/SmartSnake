@@ -21,6 +21,11 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <link href="style.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.bundle.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+
+    <script type="text/javascript" charset="utf8"
+        src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+
 
 
 </head>
@@ -59,8 +64,8 @@
                 <div class="row">
                     <div class="btn btn-primary" id="DownloadBtn">Click to Download Best Snake</div>
                 </div>
-                
-                
+
+
                 <div class="dropdown-divider"></div>
 
                 <div class="row">
@@ -96,19 +101,24 @@
                 <div class="row">
                     <canvas id="myChart" width="400" height="400"></canvas>
                 </div>
-                <div class="row">
+                                                <!-- Where Generation Statistics are inserted -->
+
+                <!-- <div class="row">
 
                     <div>
-                        <table class="table">
-                            <th>Generation</th>
-                            <th>Best Fitness</th>
-                            <th>Average Fitness</th>
-                            <th>Best Score</th>
-                            <th>Average Score</th>
-                            <th># Snakes Survive</th>
-                            <th># Tensors</th>
+                        <table class="table" id='statsTable '>
+                            <thead>
+                                <tr>
+                                    <th>Generation</th>
+                                    <th>Best Fitness</th>
+                                    <th>Average Fitness</th>
+                                    <th>Best Score</th>
+                                    <th>Average Score</th>
+                                    <th># Snakes Survive</th>
+                                    <th># Tensors</th>
+                                </tr>
+                            </thead>
                             <tbody id="pastScores">
-                                <!-- Where Generation Statistics are inserted -->
 
 
                             </tbody>
@@ -122,8 +132,39 @@
 
                         </table>
                     </div>
-                </div>
+                </div> -->
                 <hr />
+                <div class="row">
+
+                        <div>
+                            <table class="table" id='dataTable'>
+                                <thead>
+                                    <tr>
+                                        <th>Generation</th>
+                                        <th>Best Fitness</th>
+                                        <th>Average Fitness</th>
+                                        <th>Best Score</th>
+                                        <th>Average Score</th>
+                                        <th># Snakes Survive</th>
+                                        <th># Tensors</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pastScores">
+                                    <!-- Where Generation Statistics are inserted -->
+    
+    
+                                </tbody>
+                                <th>Generation</th>
+                                <th>Best Fitness</th>
+                                <th>Average Fitness</th>
+                                <th>Best Score</th>
+                                <th>Average Score</th>
+                                <th># Snakes Survive</th>
+                                <th># Tensors</th>
+    
+                            </table>
+                        </div>
+                    </div>
 
             </div>
 
