@@ -1,11 +1,11 @@
-let myChart = null;
-
 class GameInstance {
-    constructor(canvasID, generationSize, playMode) {
+    constructor(canvasID, generationSize) {
+        this.chart = null;
+
         this.initialize()
         this.started = false
 
-        this.playMode = playMode ? playMode : false;
+        // this.playMode = playMode ? playMode : false;
 
         this.snake = new Snake();
         this.canvasNum = 0;
@@ -26,10 +26,19 @@ class GameInstance {
         // console.log('\n\nGENERATION', this.generationNum, '\n\n');
         document.querySelector("#generation").innerHTML = "generation: " + this.generationNum;
         // this.initializeGraph()
-        if (this.playMode) {
-            GAME_SPEED = 100
-            this.start()
-        }
+        // if (this.playMode) {
+        //     GAME_SPEED = 100
+        //     this.start()
+        // }
+        this.manualKillSnake = false;
+        document.addEventListener('keydown', () => {
+            console.log(event);
+            if (event.keyCode == 75) {
+                this.manualKillSnake = true;
+                console.log('KILL');
+
+            }
+        })
     }
 
 
@@ -42,17 +51,12 @@ class GameInstance {
 
         // console.log(`snake #${(this.generationSize - this.snakesRemaining)}`);
         document.querySelector("#snakeNum").innerHTML =
-            `snake #${(this.generationSize - this.snakesRemaining)}`
+            `snake #${(this.generationSize - this.snakesRemaining) - 1}`
         // this.snakesRemaining = this.generation.length;
 
-
-        console.log('before:', this.snake);
-        console.log(this.snakesRemaining);
-        console.log(this.generation);
-        this.snake = this.generation[this.snakesRemaining]
-        // this.snake = new Snake()
-        // this.snakesRemaining--
-        console.log('after:', this.snake);
+        if (this.snakesRemaining > -1) {
+            this.snake = this.generation[this.snakesRemaining]
+        }
 
         this.food = new Food(this.snake.body, CANVAS_SIZE, CANVAS_SIZE)
 
@@ -78,8 +82,9 @@ class GameInstance {
             return
         }
         // If the game ended return early to stop game
-        if (this.snakesRemaining > -1 && (this.didGameEnd() || this.timeout)) {
+        if ((this.snakesRemaining > -1 && (this.didGameEnd() || this.timeout)) || this.manualKillSnake) {
             tf.tidy(() => {// console.log(this.generation[0]);
+                this.manualKillSnake = false;
 
                 this.timeout = false;
                 this.snake.died();
@@ -107,7 +112,6 @@ class GameInstance {
 
                 tf.tidy(() => {
                     let newDate = new Date()
-                    console.log(this.snake.timeOfLastFood);
                     if ((newDate - this.snake.startTime > 15000 && this.snake.score < 2)
                         || newDate - this.snake.startTime > (300 * 1000)
                         || (this.snake.timeOfLastFood !== -1 && (newDate - this.snake.timeOfLastFood > (15 * 1000)))
@@ -122,10 +126,9 @@ class GameInstance {
                     this.food.drawFood(this.canvCtx.ctx);
                     this.snake.advanceSnake(this.food, CANVAS_SIZE, CANVAS_SIZE);
                     this.snake.drawSnake(this.canvCtx.ctx);
-                    if (!this.playMode) {
-                        let inputs = this.createInputs()
-                        this.snake.predict(inputs)
-                    }
+                    let inputs = this.createInputs()
+                    this.snake.predict(inputs)
+
                     document.querySelector("#currFitness").innerHTML = "fitness: " + this.snake.fitness
                     document.querySelector("#time").innerHTML = "time: " + ((new Date() - this.snake.startTime) / 1000) + " sec"
                 })
@@ -133,9 +136,7 @@ class GameInstance {
 
             }.bind(this), GAME_SPEED)
         }
-        else if (this.playMode) {
-            this.start()
-        }
+
         else {
             tf.tidy(() => {
                 this.updateScoreTable()
@@ -148,7 +149,7 @@ class GameInstance {
                     fitnessCutoff: 30
                 })
                 document.querySelector("#snakeNum").innerHTML =
-                    `snake #${(this.generationSize - this.snakesRemaining)}`
+                    `snake #${(this.generationSize - this.snakesRemaining) - 1}`
                 this.generationNum++
                 console.log('\n\nGENERATION', this.generationNum, '\n\n');
                 document.querySelector("#generation").innerHTML = "generation: " + this.generationNum
@@ -363,7 +364,7 @@ class GameInstance {
 
         pastScoreUL.appendChild(row)
 
-        this.updateGraph(myChart, this.generationNum, as)
+        this.updateGraph(this.chart, this.generationNum, as)
 
     }
 
@@ -421,37 +422,30 @@ class GameInstance {
         this.addStartStopListeners()
     }
 
-    addGenerationNumListener() {
-        document.querySelector("#numGen").addEventListener('click', () => {
-
-
-            this.generation = this.newGeneration({ numSnakes: this.generationSize });
-            this.snakesRemaining = this.generation.length;
-
-
-
-
-        })
-    }
+    // addGenerationNumListener() {
+    //     document.querySelector("#numGen").addEventListener('click', () => {
+    //         this.generation = this.newGeneration({ numSnakes: this.generationSize });
+    //         this.snakesRemaining = this.generation.length;
+    //     })
+    // }
 
     addStartStopListeners() {
 
         document.querySelector("#StartBtn").addEventListener('click', () => {
             if (gi) gi.stop = false;
             tf.tidy(() => {
-                // gi.generationSize = document.getElementById('numGen').value
-
-                // gi.snakesRemaining = gi.generationSize
-                // gi.start()
 
                 if (!this.started) {
-                    // let generationSize = document.querySelector("#numGen").value
-                    // this.generationSize = generationSize;
-                    // this.generation = this.newGeneration({ numSnakes: this.generationSize });
-                    // this.snakesRemaining = this.generation.length;
+
+                    let generationSize = Number(document.querySelector("#numGen").value)
+                    this.generationSize = generationSize;
+                    this.generation = this.newGeneration({ numSnakes: this.generationSize });
+                    this.snakesRemaining = this.generation.length;
+                    document.getElementById('numGen').setAttribute('disabled', '')
+                    this.started = true;
+
                 }
 
-                this.started = true;
 
                 document.addEventListener("keydown", gi.changeDirection.bind(gi));
                 gi.start()
@@ -460,17 +454,25 @@ class GameInstance {
         });
         document.querySelector("#StopBtn").addEventListener('click', async () => {
             gi.stop = true
+            // let d = new Date()
+            // let dateStr = String(d.getMonth() + 1) + "-" + String(d.getDate()) + "-" + String(d.getFullYear()) + "_" + String(d.getHours()) + ":" + String(d.getMinutes()) + ":" + String(d.getSeconds())
+            // console.log(dateStr);
+            // if (gi.bestSnake) await gi.bestSnake.NN.model.save('downloads://snake-model-' + dateStr);
+
+        });
+        document.querySelector("#DownloadBtn").addEventListener('click', async () => {
+            // gi.stop = true
             let d = new Date()
             let dateStr = String(d.getMonth() + 1) + "-" + String(d.getDate()) + "-" + String(d.getFullYear()) + "_" + String(d.getHours()) + ":" + String(d.getMinutes()) + ":" + String(d.getSeconds())
             console.log(dateStr);
-            if (gi.bestSnake) await gi.bestSnake.NN.model.save('downloads://snake-model-' + dateStr);
+            if (gi.bestSnake) await gi.bestSnake.NN.model.save('downloads://best-snake-model-' + dateStr);
 
         });
     }
 
     initializeGraph() {
         let graphCtx = document.getElementById('myChart');
-        myChart = new Chart(graphCtx, {
+        this.chart = new Chart(graphCtx, {
             type: 'line',
             data: {
                 labels: [],

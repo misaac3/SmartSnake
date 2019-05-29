@@ -10,3 +10,7 @@ GameInstance.-*
 Game.js
 GameInstanceGroup.js
 .gitignore
+
+.eslintrc.js*
+
+package.json

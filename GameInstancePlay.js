@@ -1,30 +1,11 @@
 class GameInstancePlay {
     constructor(canvasID) {
-        // this.playMode = playMode ? playMode : false;
-
         this.snake = new Snake();
         this.canvasNum = 0;
         this.canvCtx = new CanvasCtx(CANVAS_SIZE, CANVAS_SIZE, canvasID + String(this.canvasNum++));
         this.food = new Food(this.snake.body, CANVAS_SIZE, CANVAS_SIZE);
-        // this.savedFitness = [];
-        // this.savedSnakes = [];
-        // this.bestSnake = null;
-        // this.timeout = false;
-        // this.startTime = new Date();
-        // this.generationSize = generationSize;
-        // this.generationNum = 0;
-        // this.generation = this.newGeneration({ numSnakes: this.generationSize });
-        // this.snakesRemaining = this.generation.length;
-        // this.generationNum++;
         this.stop = false;
-        // this.savedAvgScores = []
-        // console.log('\n\nGENERATION', this.generationNum, '\n\n');
-        // document.querySelector("#generation").innerHTML = "generation: " + this.generationNum;
-
-        // if (this.playMode) {
         GAME_SPEED = 100
-        // this.start()
-        // }
         this.pastScores = []
 
     }

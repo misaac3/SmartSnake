@@ -3,16 +3,12 @@ class CanvasCtx {
         this.width = w;
         this.height = h;
         this.ctx = this.createContext(w, h, id);
-        console.log('canvas CTX constructor' );
-
     }
 
     createContext(width, height, id) {
         if (document.getElementById(id)) { return document.getElementById(id).getContext("2d"); }
         let canvasWrapper = document.createElement('div');
-        // canvasWrapper.classList.add("")
-
-        var canvas = document.createElement('canvas');
+        let canvas = document.createElement('canvas');
         canvas.width = width;
         canvas.height = height;
         canvas.id = id
@@ -21,16 +17,7 @@ class CanvasCtx {
         document.getElementById("ROOTDIV").appendChild(canvasWrapper)
         return canvas.getContext("2d");
     }
-    makeGrid() {
-        let w = this.w
-
-        for (let i = 0; i < w; i += 10) {
-            for (let j = 0; j < w; j += 10)
-                this.ctx.strokeRect(i, j, gameCanvas.width, gameCanvas.height);
-
-        }
-
-    }
+ 
     clearCanvas() {
         //  Select the colour to fill the drawing
         this.ctx.fillStyle = CANVAS_BACKGROUND_COLOUR;

@@ -1,5 +1,3 @@
-// let GAME_SPEED = 00;
-let GAME_SPEED = document.querySelector("#gameSpeedrangeInput").value;
 
 const CANVAS_BORDER_COLOUR = 'black';
 const CANVAS_BACKGROUND_COLOUR = "white";
@@ -7,26 +5,17 @@ const SNAKE_COLOUR = 'lightgreen';
 const SNAKE_BORDER_COLOUR = 'darkgreen';
 const FOOD_COLOUR = 'red';
 const FOOD_BORDER_COLOUR = 'darkred';
-
 const GRID_COLOR = 'grey';
-
 const SQUARE_SIZE = 10;
-
 const CANVAS_SIZE = 300;
+
+let GAME_SPEED = document.querySelector("#gameSpeedrangeInput").value;
 
 let shouldDraw = true;
 let noCrossover = false;
 let initialized = false;
 let gi = null;
 
-
-// let snake = [
-//     { x: 50, y: 50 },
-//     { x: 40, y: 50 },
-//     { x: 30, y: 50 },
-//     { x: 20, y: 50 },
-//     { x: 10, y: 50 }
-// ]
 
 let initialBody = [
 
@@ -53,7 +42,6 @@ function sigmoid(z) {
 
 function shouldDrawBtn() {
     let btn = document.querySelector('#drawBtn')
-    // console.log(this);
 
     if (btn.classList.contains("btn-success")) {
         btn.classList.remove(("btn-success"))

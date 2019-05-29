@@ -7,13 +7,6 @@
     <title>SNAKE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!--Local files-->
-    <!-- <script src="bootstrap-toggle.min.js"></script>
-    <link rel="stylesheet" href="bootstrap-toggle.min.css">
-    </link>
-    <link rel="stylesheet" href="bootstrap.min.css">
-    </link>
-    <script src="bootstrap.min.js"></script> -->
-
 
     <!--CDN-->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
@@ -35,47 +28,38 @@
     </nav>
     <div class="container">
         <div class="row">
-
-            <!-- <div class="col-12"> -->
-            <div class="col-6" id="ROOTDIV">
-
-                <div class='col-12' id="score">Score: 0</div>
-                <hr />
-            </div>
-            <div class="col-6">
-
-
-                <!-- <div class="row">
-                    <input class="form-check" type="checkbox"></input>
-                </div> -->
-
-
-
-
-                <div class="row">
-
-                    <label>
-                        Change Game Speed
-                    </label>
+            <div class="col-12">
+                <div class="col-6" id="ROOTDIV">
+                    <div class='col-12' id="score">Score: 0</div>
+                    <hr />
                 </div>
-                <div class="row">
-                    <div class="form-group ">
-                        <input id="gameSpeedrangeInput" class="form-control-range" type="range" value="0" min="0"
-                            max="100" oninput="changeGameSpeed(this.value)" onchange="changeGameSpeed(this.value)" />
-                        <input id="gameSpeedTextInput" class="form-text" type="number" value="0" min="0" max="100"
-                            onsubmit="onKeydownGameSpeed(this)" onkeydown="onKeydownGameSpeed(this)"
-                            onchange="changeGameSpeed(this.value)" />
 
+                <div class="col-6">
+                    <div class="row">
+                        <label>
+                            Change Game Speed
+                        </label>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="form-group ">
+                            <input id="gameSpeedrangeInput" class="form-control-range" type="range" value="0" min="0"
+                                max="100" oninput="changeGameSpeed(this.value)"
+                                onchange="changeGameSpeed(this.value)" />
+                            <input id="gameSpeedTextInput" class="form-text" type="number" value="0" min="0" max="100"
+                                onsubmit="onKeydownGameSpeed(this)" 
+                                onkeydown="onKeydownGameSpeed(this)"
+                                onchange="changeGameSpeed(this.value)" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div id="topScore">High Score: 0</div>
+                    </div>
+                    <div class="row">
+                        <ul id="pastScores"> </ul>
                     </div>
                 </div>
-
-                <div class="row">
-                    <div id="topScore">High Score: 0</div>
-                </div>
-                <div class="row">
-                    <ul id="pastScores"> </ul>
-                </div>
-
             </div>
         </div>
     </div>
